@@ -7,6 +7,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(analyser
     src/main.cpp
     src/parser.cpp
-    src/logger.cpp
+    src/normaliser.cpp
     src/analyser.cpp
 )
