@@ -1,0 +1,12 @@
+src (main code)
+- main (entry)
+- server (Crow, API routes)
+- normaliser (standardising logs)
+- parser (log parsing logic)
+- analyser (error counter, groups)
+
+include (adts)
+- log entry (struct)
+- analyser
+- parser
+- normaliser
