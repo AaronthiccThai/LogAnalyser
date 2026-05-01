@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include "parser.h"
+
 int main(int argc, char* argv[]) {
     // Error handling for command line arguments
     if (argc < 2) {
@@ -18,7 +20,7 @@ int main(int argc, char* argv[]) {
     std::string line;
     // Read and print each line of the file
     while (std::getline(file, line)) {
-        std::cout << line << std::endl;
+        parseLogs(line);
     }
 
     file.close();

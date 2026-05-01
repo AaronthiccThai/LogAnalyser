@@ -11,6 +11,10 @@ include (adts)
 - parser
 - normaliser
 
+Order of activities
+input -> parser -> normaliser -> analyser -> output
+
+
 formats of apache http server
 
 Access Logs
