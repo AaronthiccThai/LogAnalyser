@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "parser.h"
+#include "parsers/ParserEngine.h"
 
+
+ParserEngine parserEngine;
 int main(int argc, char* argv[]) {
     // Error handling for command line arguments
     if (argc < 2) {
@@ -20,10 +22,17 @@ int main(int argc, char* argv[]) {
     std::string line;
     // Read and print each line of the file
     while (std::getline(file, line)) {
-        parseLogs(line);
+        auto entry = parserEngine.parse(line);
+
+        if (!entry) continue;
+
+        DateTime t = entry->getTimestamp();
+
+        std::cout << t.year << " "
+                << t.day << " "
+                << t.hour << std::endl;
     }
 
     file.close();
     return 0;
-
 }

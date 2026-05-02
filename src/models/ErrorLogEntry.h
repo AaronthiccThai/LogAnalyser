@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "interfaces/ILogEntry.h"
+#include "ILogEntry.h"
 #include "DateTime.h" 
 // [Date] [Module producing error: severity] [process id] [client id] [client address] [detailed error]
 
@@ -13,5 +13,8 @@ struct ErrorLogEntry : public ILogEntry {
   std::string clientAddress;
   DateTime getTimestamp() const override {
     return timestamp;
+  }
+  std::string getType() const override {
+    return "apache-error";
   }
 };
