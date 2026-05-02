@@ -12,3 +12,5 @@ DateTime parseAccessDateTime(const std::string& dateTimeStr);
 DateTime parseErrorDateTime(const std::string& dateTimeStr);
 
 int monthFromString(const std::string& m);
+
+int safeStoi(const std::string& str, int defaultVal = -1);
