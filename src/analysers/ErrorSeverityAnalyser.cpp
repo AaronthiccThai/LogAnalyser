@@ -1,7 +1,8 @@
 #include "ErrorSeverityAnalyser.h"
 #include <iostream>
 void ErrorSeverityAnalyser::process(const ILogEntry& entry) {
-    if (entry.getType() == "apache-error") {
+    if (entry.getType() == "error") {
+        //  TODO: 
         std::string type = entry.getType();
 
     }
