@@ -1,7 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "ILogParser.h"
+#include <string>
+#include "models/ILogEntry.h"
+#include "models/ILogParser.h"
 
 class ParserEngine {
 private:

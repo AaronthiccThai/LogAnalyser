@@ -10,9 +10,9 @@ public:
   virtual void process(const ILogEntry& entry) override;
   virtual void printReport() override;
   int getRequestCount() const { return requestCount; }
-  int setRequestCount(int count) { requestCount = count; }
+  void setRequestCount(int count) { requestCount = count; }
   int getErrorCount() const { return errorCount; } 
-  int setErrorCount(int count) { errorCount = count; }
+  void setErrorCount(int count) { errorCount = count; }
 
 
 };

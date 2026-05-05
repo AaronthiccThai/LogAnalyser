@@ -2,7 +2,8 @@
 #include <string>
 #include <memory>
 #include "models/ILogEntry.h"
-
+#include "utils/DateTime.h"
+// Base interface for log parsers. Specific log types (e.g. access, error) will implement this.
 struct ILogParser {
   virtual ~ILogParser() = default;
   virtual bool supports(const std::string& line) const = 0;

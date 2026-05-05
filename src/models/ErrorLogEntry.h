@@ -1,20 +1,18 @@
 #pragma once
 #include <string>
-#include "ILogEntry.h"
-#include "DateTime.h" 
-// [Date] [Module producing error: severity] [process id] [client id] [client address] [detailed error]
+#include "models/ILogEntry.h"
+#include "utils/DateTime.h"
 
-struct ErrorLogEntry : public ILogEntry {
-  DateTime timestamp;
-  std::string message;
-  std::string severity;
-  int processId;
-  int threadId;
-  std::string clientAddress;
-  DateTime getTimestamp() const override {
-    return timestamp;
-  }
-  std::string getType() const override {
-    return "apache-error";
-  }
+// Base class for error log entries. Specific formats (e.g. Apache, Nginx) will derive from this.
+class ErrorLogEntry : public ILogEntry {
+public:
+    virtual ~ErrorLogEntry() = default;
+
+    virtual DateTime getTimestamp() const override = 0;
+    virtual std::string getSeverity() const = 0;
+    virtual std::string getMessage() const = 0;
+
+    std::string getType() const override {
+        return "error";  // generic
+    }
 };

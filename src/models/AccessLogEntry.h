@@ -1,20 +1,21 @@
 #pragma once
 #include <string>
-#include "ILogEntry.h"
-#include "DateTime.h"
-// [IP address of client] [- means requested piece of info not available] [user id of person requesting] [time request was recieved] [request line in double quotes] [status code] [size of object]
- 
-struct AccessLogEntry: public ILogEntry {
-  std::string ip;
-  std::string user;
-  DateTime timestamp; // [day/month/year:hour:minute:second zone]
-  std::string requestMethod;
-  int statusCode;
-  int byteSize;
-  DateTime getTimestamp() const override {
-    return timestamp;
-  }
-  std::string getType() const override {
-    return "apache-access";
-  }
+#include "models/ILogEntry.h"
+#include "utils/DateTime.h"
+
+// Base class for access log entries. Specific formats (e.g. Apache, Nginx) will derive from this.
+class AccessLogEntry : public ILogEntry {
+public:
+    virtual ~AccessLogEntry() = default;
+
+    virtual DateTime getTimestamp() const override = 0;
+    virtual std::string getClientIP() const = 0;
+    virtual std::string getUser() const = 0;
+    virtual std::string getRequestMethod() const = 0;
+    virtual int getStatusCode() const = 0;
+    virtual int getByteSize() const = 0;
+
+    std::string getType() const override {
+        return "access";  // generic
+    }
 };

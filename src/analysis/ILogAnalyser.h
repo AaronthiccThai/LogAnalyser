@@ -6,6 +6,6 @@ struct ILogAnalyser {
     virtual ~ILogAnalyser() = default;
 
     virtual void process(const ILogEntry& entry) = 0;
-    virtual void printReport();
+    virtual void printReport() = 0;
 
 };
