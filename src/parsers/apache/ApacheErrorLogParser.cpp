@@ -1,48 +1,49 @@
-#include "ErrorLogParser.h"
+#include "ApacheErrorLogParser.h"
+#include "models/apache/ApacheErrorLogEntry.h"
 #include <regex>
 #include <iostream>
 
-bool ErrorLogParser::supports(const std::string& line) const {
+bool ApacheErrorLogParser::supports(const std::string& line) const {
     return line.find("[") != std::string::npos;
 }
 
-std::unique_ptr<ILogEntry> ErrorLogParser::parse(const std::string& logLine) const {
-    ErrorLogEntry entry{};
+std::unique_ptr<ILogEntry> ApacheErrorLogParser::parse(const std::string& logLine) const {
+    auto entry = std::make_unique<ApacheErrorLogEntry>();
 
     std::regex basePattern(R"(\[([^\]]+)\]\s+\[([^\]]+)\]\s+(.*))");
     std::smatch matches;
 
     if (!std::regex_search(logLine, matches, basePattern)) {
-        return std::make_unique<ErrorLogEntry>(entry);
+        return entry;
     }
 
-    entry.timestamp = parseDateTime(matches[1]);
+    entry->setTimestamp(parseDateTime(matches[1]));
 
     std::string moduleSeverity = matches[2];
     size_t pos = moduleSeverity.find(':');
     if (pos != std::string::npos) {
-        entry.severity = moduleSeverity.substr(pos + 1);
+        entry->setSeverity(moduleSeverity.substr(pos + 1));
     }
 
     std::string rest = matches[3];
 
     std::smatch pidMatch;
     if (std::regex_search(rest, pidMatch, std::regex(R"(\[pid\s+(\d+))"))) {
-        entry.processId = safeStoi(pidMatch[1]);
+        entry->setProcessId(safeStoi(pidMatch[1]));
     } else {
-        entry.processId = -1;
+        entry->setProcessId(-1);
     }
 
     std::smatch tidMatch;
     if (std::regex_search(rest, tidMatch, std::regex(R"(tid\s+(\d+))"))) {
-        entry.threadId = safeStoi(pidMatch[1]);
+        entry->setThreadId(safeStoi(tidMatch[1]));
     } else {
-        entry.threadId = -1;
+        entry->setThreadId(-1);
     }
 
     std::smatch clientMatch;
     if (std::regex_search(rest, clientMatch, std::regex(R"(\[client\s+([^\]]+)\])"))) {
-        entry.clientAddress = clientMatch[1];
+        entry->setClientAddress(clientMatch[1]);
     }
 
     std::string message = rest;
@@ -50,12 +51,12 @@ std::unique_ptr<ILogEntry> ErrorLogParser::parse(const std::string& logLine) con
     message = std::regex_replace(message, std::regex(R"(\[client[^\]]+\])"), "");
     message = std::regex_replace(message, std::regex(R"(^\s+)"), "");
 
-    entry.message = message;
+    entry->setMessage(message);
 
-    return std::make_unique<ErrorLogEntry>(entry);
+    return entry;
 }
 
-DateTime ErrorLogParser::parseDateTime(const std::string& dateTimeStr) const {
+DateTime ApacheErrorLogParser::parseDateTime(const std::string& dateTimeStr) const {
     DateTime dt{};
 
     std::regex pattern(

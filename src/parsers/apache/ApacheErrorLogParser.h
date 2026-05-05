@@ -1,12 +1,11 @@
 #pragma once
-#include "ILogParser.h"
+#include "models/ILogParser.h"
 #include "models/ErrorLogEntry.h"
+#include "utils/DateTime.h"
 
-class ErrorLogParser : public ILogParser {
+class ApacheErrorLogParser : public ILogParser {
 public:
     bool supports(const std::string& line) const override;
     std::unique_ptr<ILogEntry> parse(const std::string& logLine) const override;
-
-private:
-    DateTime parseDateTime(const std::string& dateTimeStr) const;
+    DateTime parseDateTime(const std::string& dateTimeStr) const override;
 };

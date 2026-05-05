@@ -2,9 +2,10 @@
 #include <fstream>
 #include <string>
 #include "parsers/ParserEngine.h"
-
+#include "analysers/AnalyserEngine.h" 
 
 ParserEngine parserEngine;
+AnalyserEngine analyserEngine;
 int main(int argc, char* argv[]) {
     // Error handling for command line arguments
     if (argc < 2) {
@@ -25,14 +26,11 @@ int main(int argc, char* argv[]) {
         auto entry = parserEngine.parse(line);
 
         if (!entry) continue;
-
+        analyserEngine.process(*entry);
         DateTime t = entry->getTimestamp();
-
-        std::cout << t.year << " "
-                << t.day << " "
-                << t.hour << std::endl;
     }
 
     file.close();
+    analyserEngine.printReport();   
     return 0;
 }
