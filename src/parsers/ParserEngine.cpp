@@ -1,6 +1,6 @@
 #include "models/ParserEngine.h"
-#include "models/apache/ApacheAccessLogParser.h"
-#include "models/apache/ApacheErrorLogParser.h"
+#include "apache/ApacheAccessLogParser.h"
+#include "apache/ApacheErrorLogParser.h"
 
 ParserEngine::ParserEngine() {
     parsers.push_back(std::make_unique<ApacheAccessLogParser>());
