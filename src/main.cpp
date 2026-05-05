@@ -28,10 +28,6 @@ int main(int argc, char* argv[]) {
         if (!entry) continue;
         analyserEngine.process(*entry);
         DateTime t = entry->getTimestamp();
-
-        std::cout << t.year << " "
-                << t.day << " "
-                << t.hour << std::endl;
     }
 
     file.close();
