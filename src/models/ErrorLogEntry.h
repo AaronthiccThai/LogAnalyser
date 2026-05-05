@@ -4,6 +4,7 @@
 #include "utils/DateTime.h"
 
 // Base class for error log entries. Specific formats (e.g. Apache, Nginx) will derive from this.
+// Some fields will be empty or -1 if not applicable to a specific log type.
 class ErrorLogEntry : public ILogEntry {
 public:
     virtual ~ErrorLogEntry() = default;
