@@ -19,12 +19,13 @@ The system is modular and extensible, allowing additional server logs and analys
 - Counts total errors
 - Calculates success and error rates
 - Provides overall traffic summary
+- Future work would involve showcasing request method and its path
 
 ### Error Severity Analysis
 - Categorises errors by severity (e.g. WARN, ERROR, CRITICAL)
 - Tracks frequency of each severity level
 - Calculates percentage distribution
-- Identifies the most severe error and its line number
+- Future work would involve identifying the most severe error and its line number
 
 ---
 
