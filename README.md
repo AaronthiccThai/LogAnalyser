@@ -44,9 +44,12 @@ The system is modular and extensible, allowing additional server logs and analys
 
 - **C++ Compiler**: A C++17 compatible compiler (e.g., GCC 7+, Clang 5+, or MSVC 2017+).
 - **CMake**: Version 3.10 or higher.
+- **Docker** (optional): For containerised execution.
 
-### Installation & Building
+## Installation & Building
 
+
+### Option 1: Build Natively (CMake)
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/AaronthiccThai/LogAnalyser.git
@@ -59,7 +62,6 @@ The system is modular and extensible, allowing additional server logs and analys
    cmake ..
    make
    ```
-
 ### Usage
 
 To analyse a log file, run the compiled binary and pass the path to your log file as an argument:
@@ -67,6 +69,18 @@ To analyse a log file, run the compiled binary and pass the path to your log fil
 ```bash
 ./analyser path/to/your/access.log
 ```
+### Option 2: Running Via Docker
+Ensure Docker is running in the background
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/AaronthiccThai/LogAnalyser.git
+   cd LogAnalyser
+2. **Build the Docker image**:
+```docker build -t log-analyser .```
+
+3. **Run the Docker container**:
+```docker run log-analyser path/to/your/access.log```
 
 ## Extending the Project 
 The Log Analyser is designed with an interface-driven architecture, making it easy to add new functionality. 
