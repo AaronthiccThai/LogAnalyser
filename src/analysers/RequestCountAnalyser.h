@@ -7,8 +7,10 @@ private:
     int errorCount = 0;
     int totalProcessed = 0;
 public:
-    virtual void process(const ILogEntry& entry) override;
+    virtual void process(const ILogEntry& entry, int lineNumber) override;
+    virtual void generateReport(std::ostream& out) override;
     virtual void printReport() override;
+    virtual void saveReport() override;
     int getRequestCount() const { return requestCount; }
     void setRequestCount(int count) { requestCount = count; }
     int getErrorCount() const { return errorCount; } 

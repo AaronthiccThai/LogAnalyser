@@ -1,9 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include "RequestCountAnalyser.h"
-
-void RequestCountAnalyser::process(const ILogEntry& entry) {
-
+#include <fstream>
+void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
+    // Make this more generalised, maybe make an enum for the different types of files
     if (entry.getType() == "apache-access") {
         setRequestCount(getRequestCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1);
@@ -14,32 +14,44 @@ void RequestCountAnalyser::process(const ILogEntry& entry) {
     }
 }
 
-void RequestCountAnalyser::printReport() {
-    std::cout << "=============================\n";
-    std::cout << " Request Count Report\n";
-    std::cout << "=============================\n\n";
-
+void RequestCountAnalyser::generateReport(std::ostream& out) {
     int requests = getRequestCount();
     int errors = getErrorCount();
-
-    int total = requests + errors;
+    int total = getTotalProcessed();
+    out << "=============================\n";
+    out << "Request Count Report for " << getFilename() << "\n";
+    out << "=============================\n\n";
 
     if (total == 0) {
-        std::cout << "No log entries processed.\n";
+        out << "No log entries processed.\n";
         return;
     }
 
     double errorRate = (static_cast<double>(errors) / total) * 100.0;
     double successRate = (static_cast<double>(requests) / total) * 100.0;
 
-    std::cout << "Total Requests: " << requests << "\n";
-    std::cout << "Total Errors:    " << errors << "\n\n";
+    out << "Total Requests: " << requests << "\n";
+    out << "Total Errors:   " << errors << "\n\n";
 
-    std::cout << std::fixed << std::setprecision(1);
-    std::cout << "Success Rate:    " << successRate << "%\n";
-    std::cout << "Error Rate:      " << errorRate << "%\n";
+    out << std::fixed << std::setprecision(1);
+    out << "Success Rate:   " << successRate << "%\n";
+    out << "Error Rate:     " << errorRate << "%\n";
 
-    std::cout << "\n-----------------------------\n";
-    std::cout << "Total Processed: " << total << "\n";
-    std::cout << "-----------------------------\n";
+    out << "\n-----------------------------\n";
+    out << "Total Processed: " << total << "\n";
+    out << "-----------------------------\n";
+}
+
+void RequestCountAnalyser::saveReport() {
+    std::ofstream outFile(getFilename() + "_request_count_report.txt");
+    if (!outFile.is_open()) {
+        std::cerr << "Failed to save report.\n";
+        return;
+    }
+    generateReport(outFile);
+    outFile.close();
+}
+
+void RequestCountAnalyser::printReport() {
+    generateReport(std::cout);
 }
