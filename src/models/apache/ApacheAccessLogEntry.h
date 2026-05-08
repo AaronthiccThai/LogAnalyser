@@ -21,7 +21,7 @@ public:
     std::string getRequestMethod() const override { return requestMethod; }
     int getStatusCode() const override { return statusCode; }
     int getByteSize() const override { return byteSize; }
-    std::string getType() const override { return "apache-access"; }
+    std::string getType() const override { return "access"; } // generalised, in future use enum for type of error log entry (apache, nginx, etc)
     // setters (used by parser)
     void setIP(const std::string& val) { ip = val; }
     void setUser(const std::string& val) { user = val; }

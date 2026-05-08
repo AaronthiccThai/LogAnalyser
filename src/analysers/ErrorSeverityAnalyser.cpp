@@ -31,9 +31,7 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
     std::string mostCommonSeverity;
     int maxCount = 0;
-
     out << "Severity Breakdown:\n";
-
     for (const auto& pair : severityCounts) {
 
         double percent = (static_cast<double>(pair.second) / getTotalErrors()) * 100.0;
@@ -52,13 +50,10 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
         out << "    Lines: ";
 
-        const auto& lines =
-            severityLineNumbers[pair.first];
+        const auto& lines = severityLineNumbers[pair.first];
 
         for (size_t i = 0; i < lines.size(); i++) {
-
             out << lines[i];
-
             if (i != lines.size() - 1) {
                 out << ", ";
             }

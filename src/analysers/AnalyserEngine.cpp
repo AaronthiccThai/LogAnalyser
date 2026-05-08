@@ -2,6 +2,7 @@
 #include "RequestCountAnalyser.h"
 #include "ErrorSeverityAnalyser.h"
 AnalyserEngine::AnalyserEngine() {
+    // Add analysers here
     analysers.push_back(std::make_unique<RequestCountAnalyser>());
     analysers.push_back(std::make_unique<ErrorSeverityAnalyser>());
 }

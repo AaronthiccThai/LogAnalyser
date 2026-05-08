@@ -15,14 +15,16 @@ std::unique_ptr<ILogEntry> ApacheAccessLogParser::parse(const std::string& logLi
 
     std::smatch matches;
 
-    if (std::regex_search(logLine, matches, pattern)) {
-        entry->setIP(matches[1]);
-        entry->setUser(matches[2]);
-        entry->setTimestamp(parseDateTime(matches[3]));
-        entry->setRequestMethod(matches[4]);
-        entry->setStatusCode(safeStoi(matches[6]));
-        entry->setByteSize(safeStoi(matches[7]));
+    if (!std::regex_search(logLine, matches, pattern)) {
+        return nullptr;
     }
+
+    entry->setIP(matches[1]);
+    entry->setUser(matches[2]);
+    entry->setTimestamp(parseDateTime(matches[3]));
+    entry->setRequestMethod(matches[4]);
+    entry->setStatusCode(safeStoi(matches[6]));
+    entry->setByteSize(safeStoi(matches[7]));
 
     return entry;
 }

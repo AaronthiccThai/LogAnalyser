@@ -2,17 +2,30 @@
 #include <iomanip>
 #include "RequestCountAnalyser.h"
 #include <fstream>
+#include "models/apache/ApacheAccessLogEntry.h"
+#include "models/apache/ApacheErrorLogEntry.h"
 void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
-    // Make this more generalised, maybe make an enum for the different types of files
-    if (entry.getType() == "apache-access") {
+    if (entry.getType() == "access") {
         setRequestCount(getRequestCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1);
+        const ApacheAccessLogEntry& accessEntry = static_cast<const ApacheAccessLogEntry&>(entry);
+        // Update request method count
+        requestMethodCounts[accessEntry.getRequestMethod()]++;
+        // Update status code count
+        statusCodeCounts[std::to_string(accessEntry.getStatusCode())]++;
+        // Update IP address count
+        ipAddressCounts[accessEntry.getClientIP()]++;
+        // Update line numbers for the IP address
+        ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
 
-    } else if (entry.getType() == "apache-error") {
+    } else if (entry.getType() == "error") {
+        const ApacheErrorLogEntry& errorEntry = static_cast<const ApacheErrorLogEntry&>(entry);
         setErrorCount(getErrorCount() + 1);
-        setTotalProcessed(getTotalProcessed() + 1);
+        setTotalProcessed(getTotalProcessed() + 1); 
+        // TODO - add some errors here not sure
     }
 }
+
 
 void RequestCountAnalyser::generateReport(std::ostream& out) {
     int requests = getRequestCount();
@@ -26,20 +39,81 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
         out << "No log entries processed.\n";
         return;
     }
-
-    double errorRate = (static_cast<double>(errors) / total) * 100.0;
-    double successRate = (static_cast<double>(requests) / total) * 100.0;
-
+    // Total counts of requests and errors
     out << "Total Requests: " << requests << "\n";
-    out << "Total Errors:   " << errors << "\n\n";
-
-    out << std::fixed << std::setprecision(1);
-    out << "Success Rate:   " << successRate << "%\n";
-    out << "Error Rate:     " << errorRate << "%\n";
-
+    // Amount of lines processed
     out << "\n-----------------------------\n";
     out << "Total Processed: " << total << "\n";
     out << "-----------------------------\n";
+
+    // Request method breakdown
+    out << "\nRequest Method Breakdown:\n";
+    for (const auto& pair : requestMethodCounts) {
+        double percent =
+            (static_cast<double>(pair.second)
+            / requests) * 100.0;
+
+        out << "  "
+            << pair.first
+            << " : "
+            << pair.second
+            << " ("
+            << std::fixed
+            << std::setprecision(1)
+            << percent
+            << "%)\n";
+    }    
+    // Status code breakdown
+    out << "\nStatus Codes:\n";
+    for (const auto& pair : statusCodeCounts) {
+        double percent =
+            (static_cast<double>(pair.second)
+            / requests) * 100.0;
+
+        out << "  "
+            << pair.first
+            << " : "
+            << pair.second
+            << " ("
+            << percent
+            << "%)\n";
+    }
+    // IP address breakdown
+    out << "\nTop Client IPs:\n";
+    for (const auto& pair : ipAddressCounts) {
+        out << "  "
+            << pair.first
+            << " : "
+            << pair.second
+            << " requests\n";
+    }    
+    // Line numbers for each IP address, determine if suspicious IP addresses
+    out << "\nPotentially Suspicious IPs:\n";
+    for (const auto& pair : ipAddressCounts) {
+        if (pair.second > 100) {
+            out << "  "
+                << pair.first
+                << " : "
+                << pair.second
+                << " requests\n";
+
+            out << "    Lines: ";
+            const auto& lines = ipAddressLineNumbers[pair.first];
+            for (size_t i = 0;i < lines.size() && i < MAX_LINES_TO_SHOW; i++) {
+                out << lines[i];
+                if (i != MAX_LINES_TO_SHOW - 1 && i != lines.size() - 1) {
+                    out << ", ";
+                }
+            }
+
+            if (lines.size() > MAX_LINES_TO_SHOW) {
+                out << " ... (+"
+                    << (lines.size() - MAX_LINES_TO_SHOW)
+                    << " more)";
+            }
+            out << "\n";
+        }
+    }    
 }
 
 void RequestCountAnalyser::saveReport() {

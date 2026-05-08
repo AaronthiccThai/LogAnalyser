@@ -16,7 +16,7 @@ public:
     DateTime getTimestamp() const override { return timestamp; }
     std::string getSeverity() const override { return severity; }
     std::string getMessage() const override { return message; }
-    std::string getType() const override { return "apache-error"; }
+    std::string getType() const override { return "error"; } // generalised, in future use enum for type of error log entry (apache, nginx, etc)
     // setters (used by parser)
     void setTimestamp(const DateTime& dt) { timestamp = dt; }
     void setSeverity(const std::string& s) { severity = s; }
