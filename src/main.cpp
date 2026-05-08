@@ -4,9 +4,9 @@
 #include "parsers/ParserEngine.h"
 #include "analysers/AnalyserEngine.h" 
 
-ParserEngine parserEngine;
-AnalyserEngine analyserEngine;
 int main(int argc, char* argv[]) {
+    ParserEngine parserEngine;
+    AnalyserEngine analyserEngine;    
     // Error handling for command line arguments
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
@@ -21,16 +21,23 @@ int main(int argc, char* argv[]) {
     }
 
     std::string line;
+    int lineNumber = 0;
     // Read and print each line of the file
     while (std::getline(file, line)) {
+        lineNumber++;
         auto entry = parserEngine.parse(line);
 
         if (!entry) continue;
-        analyserEngine.process(*entry);
+        analyserEngine.process(*entry, lineNumber);
+        analyserEngine.setFilename(argv[1]);
+        analyserEngine.setLineNumber(lineNumber);
         DateTime t = entry->getTimestamp();
     }
 
     file.close();
     analyserEngine.printReport();   
+    if (argc > 2 && std::string(argv[2]) == "--save") {
+        analyserEngine.saveReport();
+    }
     return 0;
 }

@@ -1,0 +1,5 @@
+=============================
+ Error Severity Report for ../testfiles/6.log
+=============================
+
+No error logs found.

@@ -8,4 +8,5 @@ struct ILogEntry {
   virtual DateTime getTimestamp() const = 0;
   // Get the type of log entry (e.g. "apache-access", "apache-error", more to be added in future)
   virtual std::string getType() const = 0;
+
 };

@@ -3,6 +3,7 @@
 #include "apache/ApacheErrorLogParser.h"
 
 ParserEngine::ParserEngine() {
+    // Add parsers here
     parsers.push_back(std::make_unique<ApacheAccessLogParser>());
     parsers.push_back(std::make_unique<ApacheErrorLogParser>());
 }
