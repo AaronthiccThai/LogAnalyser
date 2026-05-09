@@ -23,6 +23,7 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
         setErrorCount(getErrorCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1); 
         // TODO - add some errors here not sure
+
     }
 }
 
@@ -48,72 +49,70 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
 
     // Request method breakdown
     out << "\nRequest Method Breakdown:\n";
-    for (const auto& pair : requestMethodCounts) {
-        double percent =
-            (static_cast<double>(pair.second)
-            / requests) * 100.0;
-
-        out << "  "
-            << pair.first
-            << " : "
-            << pair.second
-            << " ("
-            << std::fixed
-            << std::setprecision(1)
-            << percent
-            << "%)\n";
-    }    
-    // Status code breakdown
-    out << "\nStatus Codes:\n";
-    for (const auto& pair : statusCodeCounts) {
-        double percent =
-            (static_cast<double>(pair.second)
-            / requests) * 100.0;
-
-        out << "  "
-            << pair.first
-            << " : "
-            << pair.second
-            << " ("
-            << percent
-            << "%)\n";
-    }
-    // IP address breakdown
-    out << "\nTop Client IPs:\n";
-    for (const auto& pair : ipAddressCounts) {
-        out << "  "
-            << pair.first
-            << " : "
-            << pair.second
-            << " requests\n";
-    }    
-    // Line numbers for each IP address, determine if suspicious IP addresses
-    out << "\nPotentially Suspicious IPs:\n";
-    for (const auto& pair : ipAddressCounts) {
-        if (pair.second > 100) {
+    if (requestMethodCounts.empty()) {
+        out << "  No access log entries found.\n";
+    } else {
+        for (const auto& pair : requestMethodCounts) {
+            double percent = (static_cast<double>(pair.second) / requests) * 100.0;
             out << "  "
                 << pair.first
                 << " : "
                 << pair.second
-                << " requests\n";
+                << " ("
+                << std::fixed
+                << std::setprecision(1)
+                << percent
+                << "%)\n";
+        } 
+    }   
+    // Status code breakdown
+    out << "\nStatus Codes:\n";
+    if (statusCodeCounts.empty()) {
+        out << "  No access log entries found.\n";
+    } else {
+        for (const auto& pair : statusCodeCounts) {
+            double percent = (static_cast<double>(pair.second) / requests) * 100.0;
 
-            out << "    Lines: ";
-            const auto& lines = ipAddressLineNumbers[pair.first];
-            for (size_t i = 0;i < lines.size() && i < MAX_LINES_TO_SHOW; i++) {
-                out << lines[i];
-                if (i != MAX_LINES_TO_SHOW - 1 && i != lines.size() - 1) {
-                    out << ", ";
-                }
-            }
-
-            if (lines.size() > MAX_LINES_TO_SHOW) {
-                out << " ... (+"
-                    << (lines.size() - MAX_LINES_TO_SHOW)
-                    << " more)";
-            }
-            out << "\n";
+            out << "  "
+                << pair.first
+                << " : "
+                << pair.second
+                << " ("
+                << percent
+                << "%)\n";
         }
-    }    
+    }
+    // Line numbers for each IP address, determine if suspicious IP addresses
+    out << "\nPotentially Suspicious IPs:\n";
+    if (ipAddressCounts.empty()) {
+        out << "  No access log entries found.\n";
+    } else {
+        for (const auto& pair : ipAddressCounts) {
+            if (pair.second > 100) {
+                out << "  "
+                    << pair.first
+                    << " : "
+                    << pair.second
+                    << " requests\n";
+
+                out << "    Lines: ";
+                const auto& lines = ipAddressLineNumbers[pair.first];
+                for (size_t i = 0;i < lines.size() && i < MAX_LINES_TO_SHOW; i++) {
+                    out << lines[i];
+                    if (i != MAX_LINES_TO_SHOW - 1 && i != lines.size() - 1) {
+                        out << ", ";
+                    }
+                }
+
+                if (lines.size() > MAX_LINES_TO_SHOW) {
+                    out << " ... (+"
+                        << (lines.size() - MAX_LINES_TO_SHOW)
+                        << " more)";
+                }
+                out << "\n";
+            }
+        }    
+    }
 }
 
 void RequestCountAnalyser::saveReport() {
