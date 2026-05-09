@@ -20,7 +20,7 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
 void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
     out << "=============================\n";
-    out << " Error Severity Report for "
+    out << "Error Severity Report for "
         << getFilename() << "\n";
     out << "=============================\n\n";
 
