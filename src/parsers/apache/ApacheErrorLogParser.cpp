@@ -16,36 +16,42 @@ std::unique_ptr<ILogEntry> ApacheErrorLogParser::parse(const std::string& logLin
     if (!std::regex_search(logLine, matches, basePattern)) {
         return entry;
     }
-
+    // DATE
     entry->setTimestamp(parseDateTime(matches[1]));
-
+    // MODULE + SEVERITY
     std::string moduleSeverity = matches[2];
     size_t pos = moduleSeverity.find(':');
     if (pos != std::string::npos) {
+        // Format: [core:error]
+        entry->setModule(moduleSeverity.substr(0, pos));
         entry->setSeverity(moduleSeverity.substr(pos + 1));
+    } else {
+        // Format: [notice]
+        entry->setModule("");
+        entry->setSeverity(moduleSeverity);
     }
 
     std::string rest = matches[3];
-
+    // PID
     std::smatch pidMatch;
     if (std::regex_search(rest, pidMatch, std::regex(R"(\[pid\s+(\d+))"))) {
         entry->setProcessId(safeStoi(pidMatch[1]));
     } else {
         entry->setProcessId(-1);
     }
-
+    // TID
     std::smatch tidMatch;
     if (std::regex_search(rest, tidMatch, std::regex(R"(tid\s+(\d+))"))) {
         entry->setThreadId(safeStoi(tidMatch[1]));
     } else {
         entry->setThreadId(-1);
     }
-
+    // CLIENT IP
     std::smatch clientMatch;
     if (std::regex_search(rest, clientMatch, std::regex(R"(\[client\s+([^\]]+)\])"))) {
         entry->setClientAddress(clientMatch[1]);
     }
-
+    // MSG
     std::string message = rest;
     message = std::regex_replace(message, std::regex(R"(\[pid[^\]]+\])"), "");
     message = std::regex_replace(message, std::regex(R"(\[client[^\]]+\])"), "");
