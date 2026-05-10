@@ -2,18 +2,26 @@
 #include <iomanip>
 #include <fstream>
 #include "ErrorSeverityAnalyser.h"
-#include "models/ErrorLogEntry.h"
+#include "models/apache/ApacheErrorLogEntry.h"
 
 void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType().find("error") != std::string::npos) {
 
-        const ErrorLogEntry* errorEntry = dynamic_cast<const ErrorLogEntry*>(&entry);
+        const ApacheErrorLogEntry* errorEntry = dynamic_cast<const ApacheErrorLogEntry*>(&entry);
         if (!errorEntry) return; // safety check
 
         std::string severity = errorEntry->getSeverity();
         severityCounts[severity]++;
         severityLineNumbers[severity].push_back(lineNumber);        
         setTotalErrors(getTotalErrors() + 1);
+        messageCounts[errorEntry->getMessage()]++;
+        if (!errorEntry->getClientAddress().empty()) {
+            clientErrors[errorEntry->getClientAddress()]++;
+        }        
+        if (errorEntry->getModule() != "") {
+            moduleErrors[errorEntry->getModule()]++;
+        }
+
     }
 }
 // Implement getLineNumber here to showcase where the errors are at
@@ -66,15 +74,40 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
             mostCommonSeverity = pair.first;
         }
     }
+    out << "\n-----------------------------\n";
+    // Module breakdown of errors (if applicable)
+    if (!moduleErrors.empty()) {
+        out << "Module breakdown of errors:\n";
+        for (const auto& pair : moduleErrors) {
+            out << "  " << pair.first << " : " << pair.second << "\n";
+        }
+    }
 
     out << "\n-----------------------------\n";
+    // Total Errors and most common severity
     out << "Total error logs: "
         << getTotalErrors() << "\n";
 
     out << "Most common severity: "
         << mostCommonSeverity << "\n";
 
-    out << "-----------------------------\n";
+    out << "\n-----------------------------\n";
+
+    // Most common error messages
+    out << "Most common error messages:\n";
+    for (const auto& pair : messageCounts) {
+        out << "  " << pair.first << " : " << pair.second << "\n";
+    }
+    out << "\n-----------------------------\n";
+
+    // Most problematic client IPs
+    out << "Most problematic client IPs:\n";
+    for (const auto& pair : clientErrors) {
+        out << "  " << pair.first << " : " << pair.second << "\n";
+    }
+    out << "\n-----------------------------\n";
+
+
 }
 void ErrorSeverityAnalyser::printReport() {
     generateReport(std::cout);

@@ -31,11 +31,47 @@ The system is modular and extensible, allowing additional server logs and analys
 
 ## Project Structure
 
-- `src/`: Contains the core implementation (main entry, server logic, and normalisers).
-- `include/`: Header files for the application's ADTs and logic.
-- `models/`: Defines the log entry interfaces and specific implementations (Access/Error).
-- `utils/`: Utility classes for common tasks like date/time manipulation.
-
+```text
+LogAnalyser/
+├── analysers/
+│   ├── AnalyserEngine.cpp
+│   ├── AnalyserEngine.h
+│   ├── ErrorSeverityAnalyser.cpp
+│   ├── ErrorSeverityAnalyser.h
+│   ├── RequestCountAnalyser.cpp
+│   └── RequestCountAnalyser.h
+│
+├── parsers/
+│   ├── ParserEngine.cpp
+│   ├── ParserEngine.h
+│   └── apache/
+│       ├── ApacheAccessLogParser.cpp
+│       ├── ApacheAccessLogParser.h
+│       ├── ApacheErrorLogParser.cpp
+│       └── ApacheErrorLogParser.h
+│
+├── models/
+│   ├── ILogEntry.h
+│   ├── ILogParser.h
+│   ├── AccessLogEntry.h
+│   ├── ErrorLogEntry.h
+│   └── apache/
+│       ├── ApacheAccessLogEntry.h
+│       └── ApacheErrorLogEntry.h
+│
+├── utils/
+│   ├── printHelp.cpp
+│   └── printHelp.h
+│
+├── testfiles/
+│   ├── 1.log
+│   ├── 2.log
+│   └── 4.log
+│
+├── main.cpp
+├── CMakeLists.txt
+└── README.md
+```
 ---
 
 ## Getting Started
@@ -62,13 +98,7 @@ The system is modular and extensible, allowing additional server logs and analys
    cmake ..
    make
    ```
-### Usage
 
-To analyse a log file, run the compiled binary and pass the path to your log file as an argument:
-
-```bash
-./analyser path/to/your/access.log
-```
 ### Option 2: Running Via Docker
 Ensure Docker is running in the background
 
@@ -79,27 +109,167 @@ Ensure Docker is running in the background
 2. **Build the Docker image**:
 ```docker build -t log-analyser .```
 
-3. **Run the Docker container**:
-```docker run log-analyser path/to/your/access.log```
 
-## Extending the Project 
-The Log Analyser is designed with an interface-driven architecture, making it easy to add new functionality. 
+---
 
-### Adding a New Log Format 
-1. Define the Model: Create a new class in src/models/ that inherits from ILogEntry. If you are adding a variation of an access or error log, inherit from AccessLogEntry or ErrorLogEntry. 
+## 🖥️ Local Usage
 
-2. Implement the Parser: Create a new parser class in src/parsers/ that implements the ILogParser interface. You must provide logic for:
-   -  ```supports(const std::string& line)```: To detect if a line matches your format.
-   -  ```parse(const std::string& line)```: To extract data into your model. 
+Run the analyser by passing a log file followed by optional command-line flags:
 
-3. Register the Parser: Add your new parser to the ParserEngine registry so it can be utilised during the file processing loop.
+```bash
+./analyser <log_file> [options]
+```
 
-### Adding a New Analyser 
-1. Create the Analyser Class: Define a new class in src/analysers/ that implements the ILogAnalyser interface. Each analyser should follow the Single Responsibility Principle, meaning it focuses on one specific type of analysis (e.g. request counting, error severity tracking, or anomaly detection) and maintains its own internal state independently. You must provide logic for:
-   -  ```supports(const std::string& line)```: To detect if a line matches your format.
-   -  ```parse(const std::string& line)```: To extract data into your model. 
+### Examples
 
-2. Implement Logic: Use dynamic_cast within your process method (as seen in ErrorSeverityAnalyser) to safely access specific fields if you are targeting a particular log type (like AccessLogEntry).
+Analyse all logs:
+```bash
+./analyser testfiles/4.log
+```
 
-3. Register the Analyser: Add your new analyser to the AnalyserEngine registry so it can be utilised during the file processing loop.
+Run only severity analysis:
+```bash
+./analyser testfiles/4.log --severity
+```
+
+Run only request analysis:
+```bash
+./analyser testfiles/4.log --requests
+```
+
+Save report:
+```bash
+./analyser testfiles/4.log --save
+```
+
+Show help:
+```bash
+./analyser --help
+```
+
+---
+
+## 🐳 Docker Usage
+
+Run using Docker instead of local build:
+
+### Build image
+```bash
+docker build -t log-analyser .
+```
+
+### Run analyser
+```bash
+docker run --rm log-analyser <log_file> [options]
+```
+
+### Examples
+
+Analyse logs:
+```bash
+docker run --rm log-analyser testfiles/4.log
+```
+
+Run severity analysis:
+```bash
+docker run --rm log-analyser testfiles/4.log --severity
+```
+
+Save report (with volume mount):
+```bash
+docker run --rm -v $(pwd)/output:/app/output log-analyser testfiles/4.log --save
+```
+
+Show help:
+```bash
+docker run --rm log-analyser --help
+```
+
+---
+## Extending the Project
+
+The Log Analyser is built using an interface-driven and modular architecture.  
+Analysers are now **command-driven**, meaning they are only executed if enabled via command-line flags (e.g. `--severity`, `--requests`, `--all`).
+
+---
+
+## Adding a New Log Format
+
+### 1. Define the Model
+Create a new class in `src/models/` that inherits from `ILogEntry`.
+
+If extending an existing type:
+- Use `AccessLogEntry` for access logs
+- Use `ErrorLogEntry` for error logs
+
+---
+
+### 2. Implement the Parser
+Create a new parser in `src/parsers/` that implements `ILogParser`.
+
+You must implement:
+
+- `supports(const std::string& line)`  
+  → Determines whether this parser can handle the log line
+
+- `parse(const std::string& line)`  
+  → Converts the raw log line into a structured `ILogEntry`
+
+---
+
+### 3. Register the Parser
+Add your parser to `ParserEngine`, so it is considered during parsing.
+
+---
+
+## Adding a New Analyser (Command-Driven)
+
+Analysers are **no longer automatically executed**.  
+They must be explicitly enabled through the CLI.
+
+---
+
+### 1. Create the Analyser Class
+Create a new class in `src/analysers/` that implements `ILogAnalyser`.
+
+Each analyser should:
+- Follow the **Single Responsibility Principle**
+- Maintain its own internal state
+- Focus on one type of analysis (e.g. severity, requests, anomalies)
+
+---
+
+### 2. Implement Logic
+Implement:
+
+- `process(const ILogEntry& entry, int lineNumber)`
+- `printReport()`
+- `saveReport()`
+
+Use `dynamic_cast` where necessary to access specific log types safely.
+
+---
+
+### 3. Register the Analyser (IMPORTANT CHANGE)
+
+Unlike the previous version, analysers are **not registered in the constructor by default**.
+
+Instead, they are enabled via `AnalyserEngine` methods:
+
+```cpp
+--severity   → analyserEngine.enableSeverityAnalyser()
+--requests   → analyserEngine.enableRequestAnalyser()
+--all        → analyserEngine.enableAll()
+```
+
+So your analyser must be added inside the appropriate enable function in `AnalyserEngine`, not automatically at startup.
+
+---
+
+### 4. CLI Control Flow
+
+The analyser will only run if:
+
+- It is enabled via command-line flags
+- OR `--all` is specified
 

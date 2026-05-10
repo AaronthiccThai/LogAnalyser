@@ -11,12 +11,14 @@ private:
     int processId;
     int threadId;
     std::string clientAddress;
-
+    std::string module;
 public:
     DateTime getTimestamp() const override { return timestamp; }
     std::string getSeverity() const override { return severity; }
     std::string getMessage() const override { return message; }
-    std::string getType() const override { return "error"; } // generalised, in future use enum for type of error log entry (apache, nginx, etc)
+    std::string getType() const override { return "error"; }
+    std::string getModule() const { return module; }
+    std::string getClientAddress() const { return clientAddress; }
     // setters (used by parser)
     void setTimestamp(const DateTime& dt) { timestamp = dt; }
     void setSeverity(const std::string& s) { severity = s; }
@@ -24,5 +26,6 @@ public:
     void setProcessId(int pid) { processId = pid; }
     void setThreadId(int tid) { threadId = tid; }
     void setClientAddress(const std::string& addr) { clientAddress = addr; }
+    void setModule(const std::string& m) { module = m; }
 
 };

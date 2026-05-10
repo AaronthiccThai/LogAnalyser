@@ -2,15 +2,28 @@
 #include "RequestCountAnalyser.h"
 #include "ErrorSeverityAnalyser.h"
 AnalyserEngine::AnalyserEngine() {
-    // Add analysers here
-    analysers.push_back(std::make_unique<RequestCountAnalyser>());
-    analysers.push_back(std::make_unique<ErrorSeverityAnalyser>());
 }
 
 void AnalyserEngine::process(const ILogEntry& entry, int lineNumber) {
     for (auto& analyser : analysers) {
         analyser->process(entry, lineNumber);
     }
+}
+void AnalyserEngine::enableRequestAnalyser() {
+    analysers.push_back(
+        std::make_unique<RequestCountAnalyser>()
+    );
+}
+
+void AnalyserEngine::enableSeverityAnalyser() {
+    analysers.push_back(
+        std::make_unique<ErrorSeverityAnalyser>()
+    );
+}
+
+void AnalyserEngine::enableAll() {
+    enableRequestAnalyser();
+    enableSeverityAnalyser();
 }
 
 void AnalyserEngine::printReport() {

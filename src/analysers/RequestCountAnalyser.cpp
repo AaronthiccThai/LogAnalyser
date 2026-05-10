@@ -22,7 +22,7 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
         const ApacheErrorLogEntry& errorEntry = static_cast<const ApacheErrorLogEntry&>(entry);
         setErrorCount(getErrorCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1); 
-        // TODO - add some errors here not sure
+        // TODO - add some errors here not sure since this analyser is focused on requests, and often error and access dont mix
 
     }
 }

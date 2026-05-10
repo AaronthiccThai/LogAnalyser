@@ -13,7 +13,7 @@ private:
     std::map<std::string, int> statusCodeCounts; // For breakdown of status
     std::map<std::string, int> ipAddressCounts; // For counting requests per IP address
     std::map<std::string, std::vector<int>> ipAddressLineNumbers; // For tracking line numbers of requests from each IP address, to determine potential sus IP
-    const size_t MAX_LINES_TO_SHOW = 10;
+    const size_t MAX_LINES_TO_SHOW = 10; // Limit amount of lines for sus IP addresses
  
 public:
     virtual void process(const ILogEntry& entry, int lineNumber) override;
