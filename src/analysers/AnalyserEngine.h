@@ -13,6 +13,11 @@ public:
     void saveReport();
     void setFilename(const std::string& fname);
     void setLineNumber(int line);
+
+    void enableRequestAnalyser();
+    void enableSeverityAnalyser();
+    void enableAll();
+
 private:
     std::vector<std::unique_ptr<ILogAnalyser>> analysers;
 };

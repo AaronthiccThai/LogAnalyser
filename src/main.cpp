@@ -3,41 +3,71 @@
 #include <string>
 #include "parsers/ParserEngine.h"
 #include "analysers/AnalyserEngine.h" 
-
+#include "utils/printHelp.h"
 int main(int argc, char* argv[]) {
+
     ParserEngine parserEngine;
-    AnalyserEngine analyserEngine;    
-    // Error handling for command line arguments
+    AnalyserEngine analyserEngine;
+
     if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+        printHelp(argv[0]);
         return 1;
+    }
+    std::string firstArg = argv[1];
+    // Handle standalone commands
+    if (firstArg == "--help") {
+        printHelp(argv[0]);
+        return 0;
+    }
+
+    bool saveReport = false;
+    bool analyseSelected = false;
+    for (int i = 2; i < argc; i++) {
+        std::string arg = argv[i];
+        if (arg == "--severity") {
+            analyserEngine.enableSeverityAnalyser();
+            analyseSelected = true;
+        } else if (arg == "--requests") {
+            analyserEngine.enableRequestAnalyser();
+            analyseSelected = true;
+        } else if (arg == "--all") {
+            analyserEngine.enableAll();
+            analyseSelected = true;
+        } else if (arg == "--save") {
+            saveReport = true;
+        } else {
+            std::cerr << "Unknown option: " << arg
+                      << "\nUse --help for usage information.\n";
+            return 1;
+        }
+    }
+    if (!analyseSelected) {
+        analyserEngine.enableAll();
     }
 
     std::ifstream file(argv[1]);
-    // Error handling for file opening
     if (!file.is_open()) {
         std::cerr << "Error opening file: " << argv[1] << std::endl;
         return 1;
     }
+    analyserEngine.setFilename(argv[1]);
 
     std::string line;
     int lineNumber = 0;
-    // Read and print each line of the file
     while (std::getline(file, line)) {
         lineNumber++;
         auto entry = parserEngine.parse(line);
-
         if (!entry) continue;
         analyserEngine.process(*entry, lineNumber);
-        analyserEngine.setFilename(argv[1]);
-        analyserEngine.setLineNumber(lineNumber);
     }
 
     file.close();
-    analyserEngine.printReport();   
-    // can expand on this in future, where users specify what they want either --save, --print, or default,
-    if (argc > 2 && std::string(argv[2]) == "--save") {
+
+    analyserEngine.printReport();
+    if (saveReport) {
         analyserEngine.saveReport();
     }
+
     return 0;
 }
+
