@@ -4,6 +4,12 @@
 #include <fstream>
 #include "models/apache/ApacheAccessLogEntry.h"
 #include "models/apache/ApacheErrorLogEntry.h"
+
+/**
+ * Process a log entry to analyze request counts
+ * @param entry The log entry to process
+ * @param lineNumber The line number of the log entry in the file, for reference in reports
+ */
 void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType() == "access") {
         setRequestCount(getRequestCount() + 1);
@@ -23,11 +29,15 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
         setErrorCount(getErrorCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1); 
         // TODO - add some errors here not sure since this analyser is focused on requests, and often error and access dont mix
+        // Can probably remove this else if block
 
     }
 }
 
-
+/**
+ * Generate a report of the request count analysis
+ * @param out The output stream to write the report to
+ */
 void RequestCountAnalyser::generateReport(std::ostream& out) {
     int requests = getRequestCount();
     int errors = getErrorCount();
@@ -115,6 +125,9 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
     }
 }
 
+/**
+ * Save the request count report to a file
+ */
 void RequestCountAnalyser::saveReport() {
     std::ofstream outFile(getFilename() + "_request_count_report.txt");
     if (!outFile.is_open()) {
@@ -125,6 +138,9 @@ void RequestCountAnalyser::saveReport() {
     outFile.close();
 }
 
+/**
+ * Print the request count report to the console
+ */
 void RequestCountAnalyser::printReport() {
     generateReport(std::cout);
 }

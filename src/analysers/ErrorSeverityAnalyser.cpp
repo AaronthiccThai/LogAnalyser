@@ -4,6 +4,11 @@
 #include "ErrorSeverityAnalyser.h"
 #include "models/apache/ApacheErrorLogEntry.h"
 
+/**
+ * Process a log entry to analyze error severity
+ * @param entry The log entry to process
+ * @param lineNumber The line number of the log entry in the file, for reference in reports
+ */
 void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType().find("error") != std::string::npos) {
 
@@ -24,7 +29,11 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
 
     }
 }
-// Implement getLineNumber here to showcase where the errors are at
+
+/**
+ * Generate a report of the error severity analysis
+ * @param out The output stream to write the report to
+ */
 void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
     out << "=============================\n";
@@ -109,10 +118,16 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
 
 }
+/**
+ * Print the error severity report to the console
+ */
 void ErrorSeverityAnalyser::printReport() {
     generateReport(std::cout);
 }
 
+/**
+ * Save the error severity report to a file
+ */
 void ErrorSeverityAnalyser::saveReport() {
     std::ofstream outFile(getFilename() + "_error_severity_report.txt");
 
