@@ -15,7 +15,9 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
         severityLineNumbers[severity].push_back(lineNumber);        
         setTotalErrors(getTotalErrors() + 1);
         messageCounts[errorEntry->getMessage()]++;
-        clientErrors[errorEntry->getClientAddress()]++;
+        if (!errorEntry->getClientAddress().empty()) {
+            clientErrors[errorEntry->getClientAddress()]++;
+        }        
         if (errorEntry->getModule() != "") {
             moduleErrors[errorEntry->getModule()]++;
         }
@@ -72,8 +74,17 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
             mostCommonSeverity = pair.first;
         }
     }
+    out << "\n-----------------------------\n";
+    // Module breakdown of errors (if applicable)
+    if (!moduleErrors.empty()) {
+        out << "Module breakdown of errors:\n";
+        for (const auto& pair : moduleErrors) {
+            out << "  " << pair.first << " : " << pair.second << "\n";
+        }
+    }
 
     out << "\n-----------------------------\n";
+    // Total Errors and most common severity
     out << "Total error logs: "
         << getTotalErrors() << "\n";
 
@@ -96,14 +107,6 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
     }
     out << "\n-----------------------------\n";
 
-    // Module breakdown of errors (if applicable)
-    if (!moduleErrors.empty()) {
-        out << "Module breakdown of errors:\n";
-        for (const auto& pair : moduleErrors) {
-            out << "  " << pair.first << " : " << pair.second << "\n";
-        }
-    }
-    out << "\n-----------------------------\n";
 
 }
 void ErrorSeverityAnalyser::printReport() {

@@ -31,11 +31,11 @@ int main(int argc, char* argv[]) {
         analyserEngine.process(*entry, lineNumber);
         analyserEngine.setFilename(argv[1]);
         analyserEngine.setLineNumber(lineNumber);
-        DateTime t = entry->getTimestamp();
     }
 
     file.close();
     analyserEngine.printReport();   
+    // can expand on this in future, where users specify what they want either --save, --print, or default,
     if (argc > 2 && std::string(argv[2]) == "--save") {
         analyserEngine.saveReport();
     }

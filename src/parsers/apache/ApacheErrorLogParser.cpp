@@ -32,21 +32,21 @@ std::unique_ptr<ILogEntry> ApacheErrorLogParser::parse(const std::string& logLin
     }
 
     std::string rest = matches[3];
-    // PID
+    // PID - not all entries have this, so we need to check
     std::smatch pidMatch;
     if (std::regex_search(rest, pidMatch, std::regex(R"(\[pid\s+(\d+))"))) {
         entry->setProcessId(safeStoi(pidMatch[1]));
     } else {
         entry->setProcessId(-1);
     }
-    // TID
+    // TID - also not always present
     std::smatch tidMatch;
     if (std::regex_search(rest, tidMatch, std::regex(R"(tid\s+(\d+))"))) {
         entry->setThreadId(safeStoi(tidMatch[1]));
     } else {
         entry->setThreadId(-1);
     }
-    // CLIENT IP
+    // CLIENT IP - also not always present
     std::smatch clientMatch;
     if (std::regex_search(rest, clientMatch, std::regex(R"(\[client\s+([^\]]+)\])"))) {
         entry->setClientAddress(clientMatch[1]);
