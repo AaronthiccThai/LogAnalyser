@@ -31,11 +31,47 @@ The system is modular and extensible, allowing additional server logs and analys
 
 ## Project Structure
 
-- `src/`: Contains the core implementation (main entry, server logic, and normalisers).
-- `include/`: Header files for the application's ADTs and logic.
-- `models/`: Defines the log entry interfaces and specific implementations (Access/Error).
-- `utils/`: Utility classes for common tasks like date/time manipulation.
-
+```text
+LogAnalyser/
+├── analysers/
+│   ├── AnalyserEngine.cpp
+│   ├── AnalyserEngine.h
+│   ├── ErrorSeverityAnalyser.cpp
+│   ├── ErrorSeverityAnalyser.h
+│   ├── RequestCountAnalyser.cpp
+│   └── RequestCountAnalyser.h
+│
+├── parsers/
+│   ├── ParserEngine.cpp
+│   ├── ParserEngine.h
+│   └── apache/
+│       ├── ApacheAccessLogParser.cpp
+│       ├── ApacheAccessLogParser.h
+│       ├── ApacheErrorLogParser.cpp
+│       └── ApacheErrorLogParser.h
+│
+├── models/
+│   ├── ILogEntry.h
+│   ├── ILogParser.h
+│   ├── AccessLogEntry.h
+│   ├── ErrorLogEntry.h
+│   └── apache/
+│       ├── ApacheAccessLogEntry.h
+│       └── ApacheErrorLogEntry.h
+│
+├── utils/
+│   ├── printHelp.cpp
+│   └── printHelp.h
+│
+├── testfiles/
+│   ├── 1.log
+│   ├── 2.log
+│   └── 4.log
+│
+├── main.cpp
+├── CMakeLists.txt
+└── README.md
+```
 ---
 
 ## Getting Started
