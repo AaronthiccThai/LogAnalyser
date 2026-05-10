@@ -60,13 +60,16 @@ LogAnalyser/
 │       └── ApacheErrorLogEntry.h
 │
 ├── utils/
-│   ├── printHelp.cpp
 │   └── printHelp.h
+│   └── DateTime.h  
 │
 ├── testfiles/
 │   ├── 1.log
 │   ├── 2.log
-│   └── 4.log
+│   ├── 3.log
+│   ├── 4.log
+│   ├── 5.log
+│   └── 6.log
 │
 ├── main.cpp
 ├── CMakeLists.txt
