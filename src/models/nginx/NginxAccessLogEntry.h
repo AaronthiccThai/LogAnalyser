@@ -1,0 +1,32 @@
+#pragma once
+#include "models/AccessLogEntry.h"
+#include "utils/DateTime.h"
+#include <string>
+
+class NginxAccessLogEntry : public AccessLogEntry {
+private:
+    std::string remoteAddress;
+    std::string remoteUser;
+    DateTime timestamp;
+    std::string requestMethod;
+    int statusCode;
+    int byteSize;
+
+
+
+public:
+    DateTime getTimestamp() const override { return timestamp; }
+    std::string getClientIP() const override { return remoteAddress; }
+    std::string getUser() const override { return remoteUser; }
+    std::string getRequestMethod() const override { return requestMethod; }
+    int getStatusCode() const override { return statusCode; }
+    int getByteSize() const override { return byteSize; }
+    std::string getType() const override { return "access"; } // generalised, in future use enum for type of error log entry (apache, nginx, etc)
+    // setters (used by parser)
+    void setIP(const std::string& val) { remoteAddress = val; }
+    void setUser(const std::string& val) { remoteUser = val; }
+    void setTimestamp(const DateTime& dt) { timestamp = dt; }
+    void setRequestMethod(const std::string& val) { requestMethod = val; }
+    void setStatusCode(int val) { statusCode = val; }
+    void setByteSize(int val) { byteSize = val; }
+};
