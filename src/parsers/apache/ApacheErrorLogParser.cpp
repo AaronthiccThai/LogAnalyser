@@ -9,7 +9,8 @@
  * @return True if the parser supports the line, false otherwise
  */
 bool ApacheErrorLogParser::supports(const std::string& line) const {
-    return line.find("[") != std::string::npos;
+    // change to look at their time stamp differences
+    return !line.empty() && line[0] == '[';
 }
 
 /**
