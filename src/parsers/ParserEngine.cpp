@@ -1,7 +1,8 @@
 #include "ParserEngine.h"
 #include "apache/ApacheAccessLogParser.h"
 #include "apache/ApacheErrorLogParser.h"
-
+#include "nginx/NginxAccessLogParser.h"
+#include "nginx/NginxErrorLogParser.h"
 /**
  * Constructor for ParserEngine
  */
@@ -9,6 +10,8 @@ ParserEngine::ParserEngine() {
     // Add parsers here
     parsers.push_back(std::make_unique<ApacheAccessLogParser>());
     parsers.push_back(std::make_unique<ApacheErrorLogParser>());
+    parsers.push_back(std::make_unique<NginxAccessLogParser>());
+    parsers.push_back(std::make_unique<NginxErrorLogParser>());
 }
 
 /**
