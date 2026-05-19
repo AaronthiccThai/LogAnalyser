@@ -22,6 +22,7 @@ ParserEngine::ParserEngine() {
 std::unique_ptr<ILogEntry> ParserEngine::parse(const std::string& line) {
     for (const auto& parser : parsers) {
         if (parser->supports(line)) {
+            printf("Parsing line with %s parser\n", typeid(*parser).name());
             return parser->parse(line);
         }
     }

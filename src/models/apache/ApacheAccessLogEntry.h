@@ -1,14 +1,8 @@
-#include "AccessLogEntry.h"
+#include "models/AccessLogEntry.h"
 class ApacheAccessLogEntry : public AccessLogEntry {
 private:
-    std::string virtualHost; // example extra field
 
 public:
-    std::string getVirtualHost() const {
-        return virtualHost;
-    }
-
-    void setVirtualHost(const std::string& v) {
-        virtualHost = v;
-    }
+    // NOTE: only override if different meaning needed, otherwise just use the shared getters/setters from AccessLogEntry
+    // Currently it is the same as the base AccessLogEntry, but we can add nginx-specific fields here in the future if needed 
 };

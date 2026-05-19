@@ -4,7 +4,8 @@
 #include <fstream>
 #include "models/apache/ApacheAccessLogEntry.h"
 #include "models/apache/ApacheErrorLogEntry.h"
-
+#include "models/nginx/NginxAccessLogEntry.h"
+#include "models/nginx/NginxErrorLogEntry.h"
 /**
  * Process a log entry to analyze request counts
  * @param entry The log entry to process
@@ -14,7 +15,7 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType() == "access") {
         setRequestCount(getRequestCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1);
-        const ApacheAccessLogEntry& accessEntry = static_cast<const ApacheAccessLogEntry&>(entry);
+        const ApacheAccessLogEntry& accessEntry = static_cast<const ApacheAccessLogEntry&>(entry); // need to generalise this to base access log entry
         // Update request method count
         requestMethodCounts[accessEntry.getRequestMethod()]++;
         // Update status code count

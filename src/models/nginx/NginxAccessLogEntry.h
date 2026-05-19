@@ -1,4 +1,4 @@
-#include "AccessLogEntry.h"
+#include "models/AccessLogEntry.h"
 
 class NginxAccessLogEntry : public AccessLogEntry {
 private:

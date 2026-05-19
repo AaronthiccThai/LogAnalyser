@@ -29,7 +29,7 @@ std::unique_ptr<ILogEntry> ApacheAccessLogParser::parse(const std::string& logLi
         return nullptr;
     }
 
-    entry->setIP(matches[1]);
+    entry->setClientIP(matches[1]);
     entry->setUser(matches[2]);
     entry->setTimestamp(parseDateTime(matches[3]));
     entry->setRequestMethod(matches[4]);
