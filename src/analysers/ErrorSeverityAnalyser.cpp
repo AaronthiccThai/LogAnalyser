@@ -12,7 +12,8 @@
 void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType().find("error") != std::string::npos) {
 
-        const ApacheErrorLogEntry* errorEntry = dynamic_cast<const ApacheErrorLogEntry*>(&entry);
+    const ErrorLogEntry* errorEntry =
+        dynamic_cast<const ErrorLogEntry*>(&entry);
         if (!errorEntry) return; // safety check
 
         std::string severity = errorEntry->getSeverity();
@@ -20,12 +21,21 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
         severityLineNumbers[severity].push_back(lineNumber);        
         setTotalErrors(getTotalErrors() + 1);
         messageCounts[errorEntry->getMessage()]++;
-        if (!errorEntry->getClientAddress().empty()) {
-            clientErrors[errorEntry->getClientAddress()]++;
+
+        // Cast to apache error log entry to get module and client info if available
+        const ApacheErrorLogEntry* apacheEntry =
+            dynamic_cast<const ApacheErrorLogEntry*>(errorEntry);
+
+        if (apacheEntry) {
+            moduleErrors[apacheEntry->getModule()]++;
+
+            if (!apacheEntry->getClientAddress().empty()) {
+                clientErrors[apacheEntry->getClientAddress()]++;
+            }
+            if (apacheEntry->getModule() != "") {
+                moduleErrors[apacheEntry->getModule()]++;
+            }
         }        
-        if (errorEntry->getModule() != "") {
-            moduleErrors[errorEntry->getModule()]++;
-        }
 
     }
 }

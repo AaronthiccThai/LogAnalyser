@@ -4,9 +4,12 @@
 #include <sstream>
 
 // Eg. 2026/05/15 14:22:31 [error] 1234#5678: *1 connect() failed (111: Connection refused)
-
 bool NginxErrorLogParser::supports(const std::string& line) const {
-    return std::regex_search(line, std::regex(R"(^\d{4}/\d{2}/\d{2})"));
+    static const std::regex pattern(
+        R"(^\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2} \[\w+\] \d+#\d+:)"
+    );
+
+    return std::regex_search(line, pattern);
 }
 
 std::unique_ptr<ILogEntry> NginxErrorLogParser::parse(const std::string& logLine) const {
@@ -30,10 +33,10 @@ std::unique_ptr<ILogEntry> NginxErrorLogParser::parse(const std::string& logLine
     entry->setSeverity(matches[3]);
 
     // PID
-    entry->setPID(safeStoi(matches[4]));
+    entry->setProcessId(safeStoi(matches[4]));
 
     // TID
-    entry->setTID(safeStoi(matches[5]));
+    entry->setThreadId(safeStoi(matches[5]));
 
     // Message
     entry->setMessage(matches[7]);
