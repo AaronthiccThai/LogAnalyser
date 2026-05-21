@@ -15,7 +15,7 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType() == "access") {
         setRequestCount(getRequestCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1);
-        const ApacheAccessLogEntry& accessEntry = static_cast<const ApacheAccessLogEntry&>(entry); // need to generalise this to base access log entry
+        const AccessLogEntry& accessEntry = static_cast<const AccessLogEntry&>(entry); 
         // Update request method count
         requestMethodCounts[accessEntry.getRequestMethod()]++;
         // Update status code count
@@ -26,7 +26,7 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
         ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
 
     } else if (entry.getType() == "error") {
-        const ApacheErrorLogEntry& errorEntry = static_cast<const ApacheErrorLogEntry&>(entry);
+        const ErrorLogEntry& errorEntry = static_cast<const ErrorLogEntry&>(entry);
         setErrorCount(getErrorCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1); 
         // TODO - add some errors here not sure since this analyser is focused on requests, and often error and access dont mix
