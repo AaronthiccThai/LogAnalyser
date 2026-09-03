@@ -1,5 +1,6 @@
 #include "models/AccessLogEntry.h"
-class ApacheAccessLogEntry : public AccessLogEntry {
+
+class NginxAccessLogEntry : public AccessLogEntry {
 private:
 
 public:

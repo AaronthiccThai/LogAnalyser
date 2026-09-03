@@ -27,3 +27,5 @@ Error Logs
 [Date] [Module producing error: severity] [process id] [client id] [client address] [detailed error]
 
 https://httpd.apache.org/docs/2.4/logs.html
+
+

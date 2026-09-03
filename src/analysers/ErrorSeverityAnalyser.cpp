@@ -4,10 +4,16 @@
 #include "ErrorSeverityAnalyser.h"
 #include "models/apache/ApacheErrorLogEntry.h"
 
+/**
+ * Process a log entry to analyze error severity
+ * @param entry The log entry to process
+ * @param lineNumber The line number of the log entry in the file, for reference in reports
+ */
 void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType().find("error") != std::string::npos) {
 
-        const ApacheErrorLogEntry* errorEntry = dynamic_cast<const ApacheErrorLogEntry*>(&entry);
+    const ErrorLogEntry* errorEntry =
+        dynamic_cast<const ErrorLogEntry*>(&entry);
         if (!errorEntry) return; // safety check
 
         std::string severity = errorEntry->getSeverity();
@@ -15,16 +21,29 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
         severityLineNumbers[severity].push_back(lineNumber);        
         setTotalErrors(getTotalErrors() + 1);
         messageCounts[errorEntry->getMessage()]++;
-        if (!errorEntry->getClientAddress().empty()) {
-            clientErrors[errorEntry->getClientAddress()]++;
+
+        // Cast to apache error log entry to get module and client info if available
+        const ApacheErrorLogEntry* apacheEntry =
+            dynamic_cast<const ApacheErrorLogEntry*>(errorEntry);
+
+        if (apacheEntry) {
+            moduleErrors[apacheEntry->getModule()]++;
+
+            if (!apacheEntry->getClientAddress().empty()) {
+                clientErrors[apacheEntry->getClientAddress()]++;
+            }
+            if (apacheEntry->getModule() != "") {
+                moduleErrors[apacheEntry->getModule()]++;
+            }
         }        
-        if (errorEntry->getModule() != "") {
-            moduleErrors[errorEntry->getModule()]++;
-        }
 
     }
 }
-// Implement getLineNumber here to showcase where the errors are at
+
+/**
+ * Generate a report of the error severity analysis
+ * @param out The output stream to write the report to
+ */
 void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
     out << "=============================\n";
@@ -109,10 +128,16 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
 
 }
+/**
+ * Print the error severity report to the console
+ */
 void ErrorSeverityAnalyser::printReport() {
     generateReport(std::cout);
 }
 
+/**
+ * Save the error severity report to a file
+ */
 void ErrorSeverityAnalyser::saveReport() {
     std::ofstream outFile(getFilename() + "_error_severity_report.txt");
 

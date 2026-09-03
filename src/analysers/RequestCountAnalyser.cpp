@@ -4,11 +4,18 @@
 #include <fstream>
 #include "models/apache/ApacheAccessLogEntry.h"
 #include "models/apache/ApacheErrorLogEntry.h"
+#include "models/nginx/NginxAccessLogEntry.h"
+#include "models/nginx/NginxErrorLogEntry.h"
+/**
+ * Process a log entry to analyze request counts
+ * @param entry The log entry to process
+ * @param lineNumber The line number of the log entry in the file, for reference in reports
+ */
 void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
     if (entry.getType() == "access") {
         setRequestCount(getRequestCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1);
-        const ApacheAccessLogEntry& accessEntry = static_cast<const ApacheAccessLogEntry&>(entry);
+        const AccessLogEntry& accessEntry = static_cast<const AccessLogEntry&>(entry); 
         // Update request method count
         requestMethodCounts[accessEntry.getRequestMethod()]++;
         // Update status code count
@@ -19,15 +26,19 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
         ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
 
     } else if (entry.getType() == "error") {
-        const ApacheErrorLogEntry& errorEntry = static_cast<const ApacheErrorLogEntry&>(entry);
+        const ErrorLogEntry& errorEntry = static_cast<const ErrorLogEntry&>(entry);
         setErrorCount(getErrorCount() + 1);
         setTotalProcessed(getTotalProcessed() + 1); 
         // TODO - add some errors here not sure since this analyser is focused on requests, and often error and access dont mix
+        // Can probably remove this else if block
 
     }
 }
 
-
+/**
+ * Generate a report of the request count analysis
+ * @param out The output stream to write the report to
+ */
 void RequestCountAnalyser::generateReport(std::ostream& out) {
     int requests = getRequestCount();
     int errors = getErrorCount();
@@ -115,6 +126,9 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
     }
 }
 
+/**
+ * Save the request count report to a file
+ */
 void RequestCountAnalyser::saveReport() {
     std::ofstream outFile(getFilename() + "_request_count_report.txt");
     if (!outFile.is_open()) {
@@ -125,6 +139,9 @@ void RequestCountAnalyser::saveReport() {
     outFile.close();
 }
 
+/**
+ * Print the request count report to the console
+ */
 void RequestCountAnalyser::printReport() {
     generateReport(std::cout);
 }

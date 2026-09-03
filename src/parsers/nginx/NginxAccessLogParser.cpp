@@ -1,5 +1,5 @@
-#include "ApacheAccessLogParser.h"
-#include "models/apache/ApacheAccessLogEntry.h"
+#include "NginxAccessLogParser.h"
+#include "models/nginx/NginxAccessLogEntry.h"
 #include <regex>
 
 /**
@@ -7,7 +7,7 @@
  * @param line The log line to check
  * @return True if the parser supports the line, false otherwise
  */
-bool ApacheAccessLogParser::supports(const std::string& line) const {
+bool NginxAccessLogParser::supports(const std::string& line) const {
     return line.find("\"") != std::string::npos;
 }
 
@@ -16,9 +16,8 @@ bool ApacheAccessLogParser::supports(const std::string& line) const {
  * @param logLine The log line to parse
  * @return A unique pointer to the parsed log entry, or nullptr if parsing fails
  */
-std::unique_ptr<ILogEntry> ApacheAccessLogParser::parse(const std::string& logLine) const {
-    auto entry = std::make_unique<ApacheAccessLogEntry>();
-
+std::unique_ptr<ILogEntry> NginxAccessLogParser::parse(const std::string& logLine) const {
+    auto entry = std::make_unique<NginxAccessLogEntry>();
     std::regex pattern(
         R"LOG((\S+)\s+\S+\s+(\S+)\s+\[([^\]]+)\]\s+"(\S+)\s+([^"]+)"\s+(\d{3})\s+(\d+))LOG"
     );
@@ -44,7 +43,7 @@ std::unique_ptr<ILogEntry> ApacheAccessLogParser::parse(const std::string& logLi
  * @param dateTimeStr The date and time string to parse
  * @return The parsed DateTime object
  */
-DateTime ApacheAccessLogParser::parseDateTime(const std::string& dateTimeStr) const {
+DateTime NginxAccessLogParser::parseDateTime(const std::string& dateTimeStr) const {
     DateTime dt{};
     std::regex dtPattern(R"((\d{2})/(\w{3})/(\d{4}):(\d{2}):(\d{2}):(\d{2}))");
     std::smatch dtMatches;
