@@ -18,7 +18,6 @@ bool NginxAccessLogParser::supports(const std::string& line) const {
  */
 std::unique_ptr<ILogEntry> NginxAccessLogParser::parse(const std::string& logLine) const {
     auto entry = std::make_unique<NginxAccessLogEntry>();
-
     std::regex pattern(
         R"LOG((\S+)\s+\S+\s+(\S+)\s+\[([^\]]+)\]\s+"(\S+)\s+([^"]+)"\s+(\d{3})\s+(\d+))LOG"
     );

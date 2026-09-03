@@ -32,48 +32,59 @@ The system is modular and extensible, allowing additional server logs and analys
 ## Project Structure
 
 ```text
-LogAnalyser/
-├── analysers/
-│   ├── AnalyserEngine.cpp
-│   ├── AnalyserEngine.h
-│   ├── ErrorSeverityAnalyser.cpp
-│   ├── ErrorSeverityAnalyser.h
-│   ├── RequestCountAnalyser.cpp
-│   └── RequestCountAnalyser.h
-│
-├── parsers/
-│   ├── ParserEngine.cpp
-│   ├── ParserEngine.h
-│   └── apache/
-│       ├── ApacheAccessLogParser.cpp
-│       ├── ApacheAccessLogParser.h
-│       ├── ApacheErrorLogParser.cpp
-│       └── ApacheErrorLogParser.h
-│
-├── models/
-│   ├── ILogEntry.h
-│   ├── ILogParser.h
-│   ├── AccessLogEntry.h
-│   ├── ErrorLogEntry.h
-│   └── apache/
-│       ├── ApacheAccessLogEntry.h
-│       └── ApacheErrorLogEntry.h
-│
-├── utils/
-│   └── printHelp.h
-│   └── DateTime.h  
-│
-├── testfiles/
-│   ├── 1.log
-│   ├── 2.log
-│   ├── 3.log
-│   ├── 4.log
-│   ├── 5.log
-│   └── 6.log
-│
-├── main.cpp
-├── CMakeLists.txt
-└── README.md
+.
+├── Dockerfile
+├── README.md
+├── notes.txt
+├── src
+│   ├── analysers
+│   │   ├── AnalyserEngine.cpp
+│   │   ├── AnalyserEngine.h
+│   │   ├── ErrorSeverityAnalyser.cpp
+│   │   ├── ErrorSeverityAnalyser.h
+│   │   ├── ILogAnalyser.h
+│   │   ├── RequestCountAnalyser.cpp
+│   │   └── RequestCountAnalyser.h
+│   ├── main.cpp
+│   ├── models
+│   │   ├── AccessLogEntry.h
+│   │   ├── ErrorLogEntry.h
+│   │   ├── ILogEntry.h
+│   │   ├── ILogParser.h
+│   │   ├── apache
+│   │   │   ├── ApacheAccessLogEntry.h
+│   │   │   └── ApacheErrorLogEntry.h
+│   │   └── nginx
+│   │       ├── NginxAccessLogEntry.h
+│   │       └── NginxErrorLogEntry.h
+│   ├── parsers
+│   │   ├── ParserEngine.cpp
+│   │   ├── ParserEngine.h
+│   │   ├── apache
+│   │   │   ├── ApacheAccessLogParser.cpp
+│   │   │   ├── ApacheAccessLogParser.h
+│   │   │   ├── ApacheErrorLogParser.cpp
+│   │   │   └── ApacheErrorLogParser.h
+│   │   └── nginx
+│   │       ├── NginxAccessLogParser.cpp
+│   │       ├── NginxAccessLogParser.h
+│   │       ├── NginxErrorLogParser.cpp
+│   │       └── NginxErrorLogParser.h
+│   └── utils
+│       ├── DateTime.h
+│       └── printHelp.h
+└── testfiles
+    ├── apache
+    │   ├── 1.log
+    │   ├── 2.log
+    │   ├── 3.log
+    │   ├── 4.log
+    │   ├── 5.log
+    │   └── 6.log
+    └── nginx
+        ├── 1.log
+        ├── 2.log
+        └── 3.log
 ```
 ---
 
@@ -115,44 +126,44 @@ Ensure Docker is running in the background
 
 ---
 
-## 🖥️ Local Usage
-
+## Local Usage
+First compile the codebase by running cmake -B build, then running ```bash ./build/make ```
 Run the analyser by passing a log file followed by optional command-line flags:
 
 ```bash
-./analyser <log_file> [options]
+./build/analyser <log_file> [options]
 ```
 
 ### Examples
 
 Analyse all logs:
 ```bash
-./analyser testfiles/4.log
+./build/analyser testfiles/4.log
 ```
 
 Run only severity analysis:
 ```bash
-./analyser testfiles/4.log --severity
+./build/analyser testfiles/4.log --severity
 ```
 
 Run only request analysis:
 ```bash
-./analyser testfiles/4.log --requests
+./build/analyser testfiles/4.log --requests
 ```
 
 Save report:
 ```bash
-./analyser testfiles/4.log --save
+./build/analyser testfiles/4.log --save
 ```
 
 Show help:
 ```bash
-./analyser --help
+./build/analyser --help
 ```
 
 ---
 
-## 🐳 Docker Usage
+## Docker Usage
 
 Run using Docker instead of local build:
 

@@ -14,7 +14,8 @@ bool NginxErrorLogParser::supports(const std::string& line) const {
 
 std::unique_ptr<ILogEntry> NginxErrorLogParser::parse(const std::string& logLine) const {
     auto entry = std::make_unique<NginxErrorLogEntry>();
-
+    // need to include possible variations of log format such as 
+    // [Date] [Time] [LogLevel] [PID#TID] Message {Some other stuff here too}
     std::regex pattern(
         R"((\d{4}/\d{2}/\d{2}) (\d{2}:\d{2}:\d{2}) \[(\w+)\] (\d+)#(\d+): (\*\d+ )?(.*))"
     );
