@@ -111,6 +111,7 @@ The system is modular and extensible, allowing additional server logs and analys
    mkdir build && cd build
    cmake ..
    make
+   cd ..
    ```
 
 ### Option 2: Running Via Docker
@@ -127,7 +128,6 @@ Ensure Docker is running in the background
 ---
 
 ## Local Usage
-First compile the codebase by running cmake -B build, then running ```bash ./build/make ```
 Run the analyser by passing a log file followed by optional command-line flags:
 
 ```bash
