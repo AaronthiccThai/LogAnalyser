@@ -21,5 +21,5 @@ public:
     virtual void saveReport() override;
     int getTotalErrors() const { return totalErrors; }
     void setTotalErrors(int count) { totalErrors = count; }
-    
+    void reset() override;         
 };

@@ -152,3 +152,16 @@ void ErrorSeverityAnalyser::saveReport() {
 
     outFile.close();
 }
+
+void ErrorSeverityAnalyser::reset() {
+    totalErrors = 0;
+
+    severityCounts.clear();
+    severityLineNumbers.clear();
+    messageCounts.clear();
+    clientErrors.clear();
+    moduleErrors.clear();
+
+    logServer = {};
+    logCategory = {};
+}

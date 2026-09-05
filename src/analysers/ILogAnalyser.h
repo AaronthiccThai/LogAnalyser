@@ -16,4 +16,5 @@ public:
     virtual void generateReport(std::ostream& out) = 0; // Generates summary for report
     virtual void printReport() = 0; // Prints report to console 
     virtual void saveReport() = 0; // Save reports to file
+    virtual void reset() = 0;    
 };

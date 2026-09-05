@@ -39,7 +39,7 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
     out << "=============================\n";
     out << "Request Count Report\n";
     out << "=============================\n\n";
-    
+
     // out << "Server: " << toString(logServer) << "\n";
     out << "Category: " << toString(logCategory) << "\n";
     out << "File: " << getFilename() << "\n\n";
@@ -142,4 +142,18 @@ void RequestCountAnalyser::saveReport() {
  */
 void RequestCountAnalyser::printReport() {
     generateReport(std::cout);
+}
+
+void RequestCountAnalyser::reset() {
+    requestCount = 0;
+    errorCount = 0;
+    totalProcessed = 0;
+
+    requestMethodCounts.clear();
+    statusCodeCounts.clear();
+    ipAddressCounts.clear();
+    ipAddressLineNumbers.clear();
+
+    logServer = {};
+    logCategory = {};
 }

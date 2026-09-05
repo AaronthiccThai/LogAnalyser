@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 
     // Process every file
     for (const std::string& filename : filenames) {
-
+        analyserEngine.reset();
         std::ifstream file(filename);
 
         if (!file.is_open()) {
@@ -86,11 +86,12 @@ int main(int argc, char* argv[]) {
             analyserEngine.process(*entry, lineNumber);
         }
         file.close();
+        analyserEngine.printReport();
+        if (saveReport) {
+            analyserEngine.saveReport();
+        }        
     }
-    analyserEngine.printReport();
-    if (saveReport) {
-        analyserEngine.saveReport();
-    }
+
     return 0;
 }
 

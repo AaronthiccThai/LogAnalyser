@@ -76,3 +76,12 @@ void AnalyserEngine::saveReport() {
         analyser->saveReport();
     }
 }
+
+/**
+ * CLear all the analysers
+ */
+void AnalyserEngine::reset() {
+    for (auto& analyser : analysers) {
+        analyser->reset();
+    }
+}

@@ -2,14 +2,13 @@
 
 ## Overview
 
-The Log Analyser is a C++ application designed to parse and analyse server log files. It currently supports Apache-style access and error logs and generates structured reports such as request counts, error rates, and error severity distributions.
+The Log Analyser is a C++ application designed to parse and analyse server log files. It currently supports Apache and Nginx access and error logs and generates structured reports such as request counts, error rates, and error severity distributions.
 
-The system is modular and extensible, allowing additional server logs and analysers to be easily integrated.
 
 ## Features
 
 ### Log Parsing
-- Parses Apache access and error logs
+- Parses Apache and Nginx access and error logs
 - Automatically identifies log types
 - Extracts structured log entries from raw text
 - Handles invalid or malformed lines safely

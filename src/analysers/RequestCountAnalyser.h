@@ -30,6 +30,6 @@ public:
     void setErrorCount(int count) { errorCount = count; }
     int getTotalProcessed() const { return totalProcessed; }
     void setTotalProcessed(int count) { totalProcessed = count; }
-
+    void reset() override;
 
 };

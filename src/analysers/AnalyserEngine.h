@@ -19,7 +19,7 @@ public:
     void enableRequestAnalyser();
     void enableSeverityAnalyser();
     void enableAll();
-
+    void reset();
 private:
     std::vector<std::unique_ptr<ILogAnalyser>> analysers;
 };
