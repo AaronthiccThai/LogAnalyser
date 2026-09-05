@@ -73,6 +73,7 @@ The system is modular and extensible, allowing additional server logs and analys
 │   └── utils
 │       ├── DateTime.h
 │       └── printHelp.h
+│       └── toString.h
 └── testfiles
     ├── apache
     │   ├── 1.log
@@ -131,7 +132,7 @@ Ensure Docker is running in the background
 Run the analyser by passing a log file followed by optional command-line flags:
 
 ```bash
-./build/analyser <log_file> [options]
+./build/analyser [options] <log_file> 
 ```
 
 ### Examples
@@ -143,17 +144,17 @@ Analyse all logs:
 
 Run only severity analysis:
 ```bash
-./build/analyser testfiles/4.log --severity
+./build/analyser --severity testfiles/4.log 
 ```
 
 Run only request analysis:
 ```bash
-./build/analyser testfiles/4.log --requests
+./build/analyser --requests testfiles/4.log 
 ```
 
 Save report:
 ```bash
-./build/analyser testfiles/4.log --save
+./build/analyser --save testfiles/4.log 
 ```
 
 Show help:
@@ -174,7 +175,7 @@ docker build -t log-analyser .
 
 ### Run analyser
 ```bash
-docker run --rm log-analyser <log_file> [options]
+docker run --rm log-analyser [options] <log_file> 
 ```
 
 ### Examples
@@ -186,12 +187,12 @@ docker run --rm log-analyser testfiles/4.log
 
 Run severity analysis:
 ```bash
-docker run --rm log-analyser testfiles/4.log --severity
+docker run --rm log-analyser --severity testfiles/4.log 
 ```
 
 Save report (with volume mount):
 ```bash
-docker run --rm -v $(pwd)/output:/app/output log-analyser testfiles/4.log --save
+docker run --rm -v $(pwd)/output:/app/output log-analyser --save testfiles/4.log 
 ```
 
 Show help:
