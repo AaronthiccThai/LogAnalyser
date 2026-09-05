@@ -34,4 +34,8 @@ public:
     void setModule(const std::string& m) {
         module = m;
     }
+    LogServer getServer() const override {
+        return LogServer::Apache;
+    }
+
 };

@@ -3,6 +3,8 @@
 #include "ILogAnalyser.h"
 #include <vector>
 #include <memory> 
+#include "RequestCountAnalyser.h"
+#include "ErrorSeverityAnalyser.h"
 
 class AnalyserEngine {
 public:

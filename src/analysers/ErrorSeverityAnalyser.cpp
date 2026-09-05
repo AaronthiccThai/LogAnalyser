@@ -3,17 +3,18 @@
 #include <fstream>
 #include "ErrorSeverityAnalyser.h"
 #include "models/apache/ApacheErrorLogEntry.h"
-
+#include "models/nginx/NginxErrorLogEntry.h"
+#include "utils/toString.h"
 /**
  * Process a log entry to analyze error severity
  * @param entry The log entry to process
  * @param lineNumber The line number of the log entry in the file, for reference in reports
  */
 void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
-    if (entry.getType().find("error") != std::string::npos) {
-
-    const ErrorLogEntry* errorEntry =
-        dynamic_cast<const ErrorLogEntry*>(&entry);
+    if (entry.getCategory() == LogCategory::Error) {
+        logCategory = entry.getCategory();
+        logServer = entry.getServer();
+        const ErrorLogEntry* errorEntry = dynamic_cast<const ErrorLogEntry*>(&entry);
         if (!errorEntry) return; // safety check
 
         std::string severity = errorEntry->getSeverity();
@@ -36,7 +37,6 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
                 moduleErrors[apacheEntry->getModule()]++;
             }
         }        
-
     }
 }
 
@@ -55,7 +55,9 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
         out << "No error logs found.\n";
         return;
     }
-
+    
+    out << "Server: " << toString(logServer) << "\n";
+    out << "Category: " << toString(logCategory) << "\n";
     std::string mostCommonSeverity;
     int maxCount = 0;
     out << "Severity Breakdown:\n";

@@ -25,10 +25,6 @@ public:
         return message;
     }
 
-    std::string getType() const override {
-        return "error";
-    }
-
     // Shared setters
     void setTimestamp(const DateTime& ts) {
         timestamp = ts;
@@ -40,5 +36,9 @@ public:
 
     void setMessage(const std::string& msg) {
         message = msg;
+    }
+    
+    LogCategory getCategory() const override {
+        return LogCategory::Error;
     }
 };

@@ -34,4 +34,9 @@ public:
     void setConnectionNumber(int num) {
         connectionNumber = num;
     }
+    LogServer getServer() const override {
+        return LogServer::Nginx;
+    }
+
+
 };

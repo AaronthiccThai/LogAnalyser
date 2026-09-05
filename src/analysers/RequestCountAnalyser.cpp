@@ -3,38 +3,30 @@
 #include "RequestCountAnalyser.h"
 #include <fstream>
 #include "models/apache/ApacheAccessLogEntry.h"
-#include "models/apache/ApacheErrorLogEntry.h"
 #include "models/nginx/NginxAccessLogEntry.h"
-#include "models/nginx/NginxErrorLogEntry.h"
+#include "utils/toString.h"
+
 /**
  * Process a log entry to analyze request counts
  * @param entry The log entry to process
  * @param lineNumber The line number of the log entry in the file, for reference in reports
  */
 void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
-    if (entry.getType() == "access") {
-        setRequestCount(getRequestCount() + 1);
-        setTotalProcessed(getTotalProcessed() + 1);
-        const AccessLogEntry& accessEntry = static_cast<const AccessLogEntry&>(entry); 
-        // Update request method count
-        requestMethodCounts[accessEntry.getRequestMethod()]++;
-        // Update status code count
-        statusCodeCounts[std::to_string(accessEntry.getStatusCode())]++;
-        // Update IP address count
-        ipAddressCounts[accessEntry.getClientIP()]++;
-        // Update line numbers for the IP address
-        ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
-
-    } else if (entry.getType() == "error") {
-        const ErrorLogEntry& errorEntry = static_cast<const ErrorLogEntry&>(entry);
-        setErrorCount(getErrorCount() + 1);
-        setTotalProcessed(getTotalProcessed() + 1); 
-        // TODO - add some errors here not sure since this analyser is focused on requests, and often error and access dont mix
-        // Can probably remove this else if block
-
+    if (entry.getCategory() != LogCategory::Access) {
+        return;
     }
-}
+    logCategory = entry.getCategory();
+    logServer = entry.getServer();
 
+    setRequestCount(getRequestCount() + 1);
+    setTotalProcessed(getTotalProcessed() + 1);
+
+    const AccessLogEntry& accessEntry = static_cast<const AccessLogEntry&>(entry);
+    requestMethodCounts[accessEntry.getRequestMethod()]++;
+    statusCodeCounts[std::to_string(accessEntry.getStatusCode())]++;
+    ipAddressCounts[accessEntry.getClientIP()]++;
+    ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
+}
 /**
  * Generate a report of the request count analysis
  * @param out The output stream to write the report to
@@ -43,14 +35,20 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
     int requests = getRequestCount();
     int errors = getErrorCount();
     int total = getTotalProcessed();
+
     out << "=============================\n";
-    out << "Request Count Report for " << getFilename() << "\n";
+    out << "Request Count Report\n";
     out << "=============================\n\n";
+    
+    // out << "Server: " << toString(logServer) << "\n";
+    out << "Category: " << toString(logCategory) << "\n";
+    out << "File: " << getFilename() << "\n\n";
 
     if (total == 0) {
         out << "No log entries processed.\n";
         return;
     }
+
     // Total counts of requests and errors
     out << "Total Requests: " << requests << "\n";
     // Amount of lines processed

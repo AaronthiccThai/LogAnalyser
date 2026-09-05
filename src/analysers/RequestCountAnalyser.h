@@ -4,6 +4,8 @@
 #include <map>  
 #include <string>
 #include <vector>
+#include "models/LogType.h"
+
 class RequestCountAnalyser : public ILogAnalyser {
 private:
     int requestCount = 0;
@@ -13,6 +15,8 @@ private:
     std::map<std::string, int> statusCodeCounts; // For breakdown of status
     std::map<std::string, int> ipAddressCounts; // For counting requests per IP address
     std::map<std::string, std::vector<int>> ipAddressLineNumbers; // For tracking line numbers of requests from each IP address, to determine potential sus IP
+    LogServer logServer;
+    LogCategory logCategory;
     const size_t MAX_LINES_TO_SHOW = 10; // Limit amount of lines for sus IP addresses
  
 public:

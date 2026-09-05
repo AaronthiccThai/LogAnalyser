@@ -11,7 +11,8 @@ private:
     std::map<std::string, int> messageCounts;  // Most common error messages
     std::map<std::string, int> clientErrors;  // Most problematic client ip
     std::map<std::string, int> moduleErrors; // If applicable, module breakdown of errors
-    // Critical events 
+    LogCategory logCategory;
+    LogServer logServer;
 
 public:
     virtual void process(const ILogEntry& entry, int lineNumber) override;
@@ -20,7 +21,5 @@ public:
     virtual void saveReport() override;
     int getTotalErrors() const { return totalErrors; }
     void setTotalErrors(int count) { totalErrors = count; }
+    
 };
-
-// Analyse the most severe error, get their line number, timestamp, and summary
-// Potentially parse it into a LLM to get a more detailed summary of the error and potential solutions, and then print it in the report.

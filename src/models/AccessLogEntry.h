@@ -39,10 +39,6 @@ public:
         return byteSize;
     }
 
-    std::string getType() const override {
-        return "access";
-    }
-
     // shared setters (used by parsers)
     void setTimestamp(const DateTime& dt) {
         timestamp = dt;
@@ -67,4 +63,8 @@ public:
     void setByteSize(int size) {
         byteSize = size;
     }
+
+    LogCategory getCategory() const override {
+        return LogCategory::Access;
+    } 
 };
