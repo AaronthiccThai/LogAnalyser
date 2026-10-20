@@ -1,3 +1,10 @@
+[![C++](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17.html)
+[![CMake](https://img.shields.io/badge/CMake-Build-064F8C.svg?logo=cmake)](https://cmake.org/)
+[![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)](https://ubuntu.com/)
+[![GitHub license](https://img.shields.io/github/license/AaronthiccThai/LogAnalyser)](https://github.com/AaronthiccThai/LogAnalyser/blob/main/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/AaronthiccThai/LogAnalyser)](https://github.com/AaronthiccThai/LogAnalyser/issues)
+[![CI Pipeline](https://github.com/AaronthiccThai/LogAnalyser/actions/workflows/ci.yml/badge.svg)](https://github.com/AaronthiccThai/LogAnalyser/actions/workflows/ci.yml)
+
 # Log Analyser
 
 ## Overview
