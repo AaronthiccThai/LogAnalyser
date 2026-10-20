@@ -1,31 +1,24 @@
-src (main code)
-- main (entry)
-- server (Crow, API routes)
-- normaliser (standardising logs)
-- parser (log parsing logic)
-- analyser (error counter, groups)
+- include multithreading in program
+- need to modify analyser engine 
+- need to modify parser engine
 
-include (adts)
-- log entry (struct)
-- analyser
-- parser
-- normaliser
+- each thread has its own analyser/parser
 
-Order of activities
-input -> parser -> normaliser -> analyser -> output
-
-
-formats of apache http server
-
-Access Logs
-127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
-[IP address of client] [- means requested piece of info not available] [user id of person requesting] [time request was recieved] [request line in double quotes] [status code] [size of object]
-
-
-Error Logs
-[Fri Sep 09 10:42:29.902022 2011] [core:error] [pid 35708:tid 4328636416] [client 72.15.99.187] AH00124: Request exceeded the limit of 10 internal redirects due to probable configuration error
-[Date] [Module producing error: severity] [process id] [client id] [client address] [detailed error]
-
-https://httpd.apache.org/docs/2.4/logs.html
-
-
+thread -> parser engine + analyser engine -> analyser 
+main()
+  ↓
+read entire file into vector<string>
+  ↓
+processFile()
+  ↓
+(divide length of vector size by chunks)
+create Thread 1 ──→ processChunk(0, 24)
+create Thread 2 ──→ processChunk(25, 49)
+create Thread 3 ──→ processChunk(50, 74)
+create Thread 4 ──→ processChunk(75, 99)
+  ↓
+join()
+  ↓
+merge results
+  ↓
+print report
