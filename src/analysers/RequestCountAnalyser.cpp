@@ -5,7 +5,7 @@
 #include "models/apache/ApacheAccessLogEntry.h"
 #include "models/nginx/NginxAccessLogEntry.h"
 #include "utils/toString.h"
-
+#include "utils/ReportFormatter.h"
 /**
  * Process a log entry to analyze request counts
  * @param entry The log entry to process
@@ -36,14 +36,13 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
     int errors = getErrorCount();
     int total = getTotalProcessed();
 
-    out << "=============================\n";
-    out << "Request Count Report\n";
-    out << "=============================\n\n";
+    ReportFormatter::printHeader(out, "REQUEST COUNT REPORT");
 
     // out << "Server: " << toString(logServer) << "\n";
     out << "Category: " << toString(logCategory) << "\n";
     out << "File: " << getFilename() << "\n\n";
 
+    ReportFormatter::printSection(out, "SUMMARY");
     if (total == 0) {
         out << "No log entries processed.\n";
         return;

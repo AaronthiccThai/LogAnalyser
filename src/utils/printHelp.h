@@ -1,6 +1,6 @@
 #include <iostream>
 void printHelp(const char* programName) {
-    std::cout << "Usage: " << programName << " <filename> [options]\n";
+    std::cout << "Usage: " << programName << " <filename>(s) [options]\n";
     std::cout << "Options:\n";
     std::cout << "  --severity   Generate error severity report\n";
     std::cout << "  --requests   Generate request analysis report\n";

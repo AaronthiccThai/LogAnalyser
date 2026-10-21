@@ -5,6 +5,7 @@
 #include "models/apache/ApacheErrorLogEntry.h"
 #include "models/nginx/NginxErrorLogEntry.h"
 #include "utils/toString.h"
+#include "utils/ReportFormatter.h"
 /**
  * Process a log entry to analyze error severity
  * @param entry The log entry to process
@@ -23,17 +24,27 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
         setTotalErrors(getTotalErrors() + 1);
         messageCounts[errorEntry->getMessage()]++;
 
+        DateTime timestamp = errorEntry->getTimestamp();
+
+        std::ostringstream hourKey;
+        hourKey << timestamp.year << "-"
+                << std::setw(2) << std::setfill('0') << timestamp.month << "-"
+                << std::setw(2) << std::setfill('0') << timestamp.day << " "
+                << std::setw(2) << std::setfill('0') << timestamp.hour
+                << ":00";
+
+        errorsByTime[hourKey.str()]++;
+
         // Cast to apache error log entry to get module and client info if available
         const ApacheErrorLogEntry* apacheEntry =
             dynamic_cast<const ApacheErrorLogEntry*>(errorEntry);
 
         if (apacheEntry) {
-            moduleErrors[apacheEntry->getModule()]++;
 
             if (!apacheEntry->getClientAddress().empty()) {
                 clientErrors[apacheEntry->getClientAddress()]++;
             }
-            if (apacheEntry->getModule() != "") {
+            if (!apacheEntry->getModule().empty()) {
                 moduleErrors[apacheEntry->getModule()]++;
             }
         }        
@@ -46,10 +57,10 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
  */
 void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
 
-    out << "=============================\n";
-    out << "Error Severity Report for "
-        << getFilename() << "\n";
-    out << "=============================\n\n";
+    ReportFormatter::printHeader(out, "ERROR ANALYSIS REPORT");
+    out << "File: " << getFilename() << "\n";
+
+    ReportFormatter::printSection(out, "SUMMARY");
 
     if (getTotalErrors() == 0) {
         out << "No error logs found.\n";
@@ -120,6 +131,14 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
         out << "  " << pair.first << " : " << pair.second << "\n";
     }
     out << "\n-----------------------------\n";
+    // List all error count categorised by hours
+    out << "Errors by hour:\n";
+
+    for (const auto& pair : errorsByTime) {
+        out << "  " << pair.first
+            << " : " << pair.second << " errors\n";
+    }
+    out << "\n-----------------------------\n";
 
     // Most problematic client IPs
     out << "Most problematic client IPs:\n";
@@ -161,7 +180,7 @@ void ErrorSeverityAnalyser::reset() {
     messageCounts.clear();
     clientErrors.clear();
     moduleErrors.clear();
-
+    errorsByTime.clear();
     logServer = {};
     logCategory = {};
 }
