@@ -18,7 +18,8 @@ private:
     LogServer logServer;
     LogCategory logCategory;
     const size_t MAX_LINES_TO_SHOW = 10; // Limit amount of lines for sus IP addresses
- 
+    std::map<std::string, int> requestByHour; 
+
 public:
     virtual void process(const ILogEntry& entry, int lineNumber) override;
     virtual void generateReport(std::ostream& out) override;

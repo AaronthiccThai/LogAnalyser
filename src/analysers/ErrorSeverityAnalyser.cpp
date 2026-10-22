@@ -16,7 +16,7 @@ void ErrorSeverityAnalyser::process(const ILogEntry& entry, int lineNumber) {
         logCategory = entry.getCategory();
         logServer = entry.getServer();
         const ErrorLogEntry* errorEntry = dynamic_cast<const ErrorLogEntry*>(&entry);
-        if (!errorEntry) return; // safety check
+        if (errorEntry == nullptr) return;
 
         std::string severity = errorEntry->getSeverity();
         severityCounts[severity]++;

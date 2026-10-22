@@ -13,7 +13,6 @@ private:
     std::map<std::string, int> clientErrors;  // Most problematic client ip
     std::map<std::string, int> moduleErrors;
     std::map<std::string, int> errorsByTime;
-
     LogCategory logCategory;
     LogServer logServer;
 

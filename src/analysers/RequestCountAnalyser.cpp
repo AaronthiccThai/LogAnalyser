@@ -21,11 +21,23 @@ void RequestCountAnalyser::process(const ILogEntry& entry, int lineNumber) {
     setRequestCount(getRequestCount() + 1);
     setTotalProcessed(getTotalProcessed() + 1);
 
-    const AccessLogEntry& accessEntry = static_cast<const AccessLogEntry&>(entry);
-    requestMethodCounts[accessEntry.getRequestMethod()]++;
-    statusCodeCounts[std::to_string(accessEntry.getStatusCode())]++;
-    ipAddressCounts[accessEntry.getClientIP()]++;
-    ipAddressLineNumbers[accessEntry.getClientIP()].push_back(lineNumber);
+    const AccessLogEntry* accessEntry = dynamic_cast<const AccessLogEntry*>(&entry);
+    if (accessEntry == nullptr) return;
+    requestMethodCounts[accessEntry->getRequestMethod()]++;
+    statusCodeCounts[std::to_string(accessEntry->getStatusCode())]++;
+    ipAddressCounts[accessEntry->getClientIP()]++;
+    ipAddressLineNumbers[accessEntry->getClientIP()].push_back(lineNumber);
+
+    DateTime timestamp = accessEntry->getTimestamp();
+
+    std::ostringstream hourKey;
+    hourKey << timestamp.year << "-"
+            << std::setw(2) << std::setfill('0') << timestamp.month << "-"
+            << std::setw(2) << std::setfill('0') << timestamp.day << " "
+            << std::setw(2) << std::setfill('0') << timestamp.hour
+            << ":00";
+
+    requestByHour[hourKey.str()]++;    
 }
 /**
  * Generate a report of the request count analysis
@@ -90,6 +102,16 @@ void RequestCountAnalyser::generateReport(std::ostream& out) {
                 << "%)\n";
         }
     }
+
+    // List all request count categorised by hours
+    out << "\nRequests by hour:\n";
+
+    for (const auto& pair : requestByHour) {
+        out << "  " << pair.first
+            << " : " << pair.second << " request(s)\n";
+    }
+    out << "\n-----------------------------\n"; 
+
     // Line numbers for each IP address, determine if suspicious IP addresses
     out << "\nPotentially Suspicious IPs:\n";
     if (ipAddressCounts.empty()) {
