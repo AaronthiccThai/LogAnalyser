@@ -206,3 +206,14 @@ Show help:
 docker run --rm log-analyser --help
 ```
 
+### Demo/Images
+```bash
+./analyser ../testfiles/apache/1.log
+```
+![Image 1](./images/image1.png)
+
+
+```bash
+./analyser ../testfiles/apache/2.log
+```
+![Image 2](./images/image2.png)
