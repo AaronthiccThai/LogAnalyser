@@ -131,6 +131,7 @@ void ErrorSeverityAnalyser::generateReport(std::ostream& out) {
         out << "  " << pair.first << " : " << pair.second << "\n";
     }
     out << "\n-----------------------------\n";
+    
     // List all error count categorised by hours
     out << "Errors by hour:\n";
 
